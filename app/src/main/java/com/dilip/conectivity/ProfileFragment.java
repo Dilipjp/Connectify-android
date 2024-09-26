@@ -23,7 +23,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView userName, userEmail, userPhone, userBio;
     private ImageView profileImage;
-    private Button signOutButton;
+    private Button signOutButton, editProfileButton;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef;
 
@@ -46,6 +46,7 @@ public class ProfileFragment extends Fragment {
         userBio = view.findViewById(R.id.userBio);
         profileImage = view.findViewById(R.id.profileImage);
         signOutButton = view.findViewById(R.id.signOutButton);
+        editProfileButton = view.findViewById(R.id.editProfileButton);
 
         // Load user details from Firebase Realtime Database
         loadUserDetails();
@@ -57,6 +58,10 @@ public class ProfileFragment extends Fragment {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);  // Clear back stack
             startActivity(intent);
             getActivity().finish();  // Close current activity
+        });
+        editProfileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), EditProfileActivity.class);
+            startActivity(intent);
         });
 
         return view;
