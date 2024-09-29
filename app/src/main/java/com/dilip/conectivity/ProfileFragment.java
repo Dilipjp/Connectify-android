@@ -83,7 +83,7 @@ public class ProfileFragment extends Fragment {
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);
-                   // profileImage
+                    // profileImage
                     userBio.setText(bio);
                     if (image != null && !image.isEmpty()) {
                         Picasso.get()
