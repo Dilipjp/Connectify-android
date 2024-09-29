@@ -1,12 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:padding="16dp">
 
-    <TextView
+    <ImageView
+        android:id="@+id/postImage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/darker_gray"
+        android:scaleType="centerCrop" />
+
+    <Button
+        android:id="@+id/selectImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="post Page"
-        android:textSize="18sp" />
+        android:text="Select Image"
+        android:layout_below="@id/postImage"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:id="@+id/postCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Write a caption..."
+        android:layout_below="@id/selectImageButton"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/uploadPostButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Post"
+        android:layout_below="@id/postCaption"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
