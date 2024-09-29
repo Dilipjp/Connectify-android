@@ -42,8 +42,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         // Load post image using Picasso
         Picasso.get()
                 .load(post.getPostImageUrl())
-                .placeholder(R.drawable.ic_profile_placeholder)
-                .error(R.drawable.ic_profile_placeholder)
+                .placeholder(R.drawable.ic_post_placeholder)
+                .error(R.drawable.ic_post_placeholder)
                 .into(holder.postImageView);
 
         // Get user details from the 'users' node using the userId
