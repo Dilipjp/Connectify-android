@@ -62,7 +62,7 @@
             android:id="@+id/likeIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_like" />
+            android:src="@drawable/like" />
 
         <TextView
             android:id="@+id/likeText"
