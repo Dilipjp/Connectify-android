@@ -85,9 +85,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
 
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (post.getLikes() != null && post.getLikes().contains(currentUserId)) {
-            holder.likeIcon.setImageResource(R.drawable.like); // Set the liked icon
+            holder.likeIcon.setImageResource(R.drawable.like);
         } else {
-            holder.likeIcon.setImageResource(R.drawable.unlike); // Set the unlike icon
+            holder.likeIcon.setImageResource(R.drawable.unlike);
         }
         holder.likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +130,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
 
             }
         });
+        holder.commentbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private void sharePost(String imageUrl, String caption, Context context) {
@@ -156,6 +162,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         ImageView likeIcon;
         LinearLayout likeButton;
         LinearLayout Sharebutton;
+        LinearLayout commentbutton;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -168,6 +175,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             likeIcon = itemView.findViewById(R.id.likeIcon);
             likeButton = itemView.findViewById(R.id.like);
              Sharebutton = itemView.findViewById(R.id.Sharebutton);
+             commentbutton = itemView.findViewById(R.id.commentbutton);
         }
     }
 }
