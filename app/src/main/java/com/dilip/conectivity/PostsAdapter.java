@@ -70,9 +70,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle potential errors here
+
             }
         });
+
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (post.getLikes() != null && post.getLikes().contains(currentUserId)) {
+            holder.likeIcon.setImageResource(R.drawable.like); // Set the liked icon
+        } else {
+            holder.likeIcon.setImageResource(R.drawable.ic_like_outline); // Set the unlike icon
+        }
     }
 
 
