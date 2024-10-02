@@ -56,7 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createNewAccount();
-                Intent i = new Intent(SignUpActivity.this, SignInActivity.class);
+               // Intent i = new Intent(SignUpActivity.this, SignInActivity.class);
             }
         });
 
@@ -155,7 +155,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         successTextView.setVisibility(View.GONE);
-                        startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+                        startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
                         finish();
                     } else {
                         errorTextView.setVisibility(View.VISIBLE);
