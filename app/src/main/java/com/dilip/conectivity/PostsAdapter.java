@@ -31,7 +31,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         return new PostViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = postList.get(position);
@@ -73,8 +72,24 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 // Handle potential errors here
             }
         });
-    }
 
+        // Set like count
+        holder.likeCountTextView.setText(post.getLikeCount() + " Likes");
+
+        // Handle like button click
+        holder.likeButton.setOnClickListener(v -> {
+            // Increment like count and update Firebase
+            int newLikeCount = post.getLikeCount() + 1;
+            post.setLikeCount(newLikeCount);
+
+            // Update the Firebase database
+            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
+            postsRef.child(post.getPostId()).child("likeCount").setValue(newLikeCount);
+
+            // Update like count on the UI
+            holder.likeCountTextView.setText(newLikeCount + " Likes");
+        });
+    }
 
     @Override
     public int getItemCount() {
@@ -84,8 +99,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     static class PostViewHolder extends RecyclerView.ViewHolder {
         ImageView postImageView;
         ImageView userProfileImageView;
+        ImageView likeButton;
         TextView captionTextView;
         TextView usernameTextView;
+        TextView likeCountTextView;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -93,8 +110,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             // Initialize views
             postImageView = itemView.findViewById(R.id.postImageView);
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
+            likeButton = itemView.findViewById(R.id.likeButton);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
+            likeCountTextView = itemView.findViewById(R.id.likeCountTextView);
         }
     }
 }
