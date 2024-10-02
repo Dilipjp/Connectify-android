@@ -1,4 +1,5 @@
 package com.dilip.conectivity;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -28,16 +31,18 @@ import java.util.Map;
 public class PostFragment extends Fragment {
 
     private ImageView postImage;
-    private Button selectImageButton, uploadPostButton;
-    private EditText postCaption;
+    private Button selectImageButton, uploadPostButton, postCommentButton;
+    private EditText postCaption, commentEditText;
     private Uri imageUri;
     private StorageReference storageReference;
     private DatabaseReference postsRef;
     private ProgressDialog progressDialog;
     private FirebaseAuth mAuth;
+    private RecyclerView commentsRecyclerView;
 
     private static final int IMAGE_PICK_CODE = 1000;
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,6 +52,11 @@ public class PostFragment extends Fragment {
         selectImageButton = view.findViewById(R.id.selectImageButton);
         uploadPostButton = view.findViewById(R.id.uploadPostButton);
         postCaption = view.findViewById(R.id.postCaption);
+
+
+        postCommentButton = view.findViewById(R.id.postCommentButton);
+         commentEditText = view.findViewById(R.id.commentEditText);
+         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
 
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("PostImages");
@@ -59,8 +69,21 @@ public class PostFragment extends Fragment {
         // Upload post
         uploadPostButton.setOnClickListener(v -> uploadPost());
 
+        String postId = "your_post_id";
+
+        postCommentButton.setOnClickListener(v -> {
+            String commentText = commentEditText.getText().toString().trim();
+            if (!TextUtils.isEmpty(commentText)) {
+                postComment(postId, commentText);
+                commentEditText.setText("");
+            }
+        });
+
+
         return view;
     }
+
+
 
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -126,3 +149,25 @@ public class PostFragment extends Fragment {
         }
     }
 }
+
+
+//private void postComment(String postId, String commentText) {
+//    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get the current user's ID
+//    DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
+//
+//    String commentId = commentsRef.push().getKey(); // Generate a unique ID for the comment
+//    long timestamp = System.currentTimeMillis();
+//
+//    Comment comment = new Comment(commentId, postId, userId, commentText, timestamp);
+//
+//    // Save the comment to Firebase
+//    if (commentId != null) {
+//        commentsRef.child(commentId).setValue(comment).addOnCompleteListener(task -> {
+//            if (task.isSuccessful())
+//                Toast.makeText(getContext(), "Comment posted!", Toast.LENGTH_SHORT).show();
+//            else {
+//                Toast.makeText(getContext(), "Failed to post comment", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+//}
