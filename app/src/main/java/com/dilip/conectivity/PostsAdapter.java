@@ -1,9 +1,12 @@
 package com.dilip.conectivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +26,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
 
     private List<Post> postList;
 
+
     public PostsAdapter(List<Post> postList) {
         this.postList = postList;
     }
@@ -32,6 +36,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
         return new PostViewHolder(view);
+
+
     }
 
 
@@ -83,7 +89,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         } else {
             holder.likeIcon.setImageResource(R.drawable.unlike); // Set the unlike icon
         }
-        holder.likeText.setOnClickListener(new View.OnClickListener() {
+        holder.likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(post.getPostId());
@@ -116,8 +122,26 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 });
             }
         });
+
+        holder.Sharebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharePost(post.getPostImageUrl(), post.getCaption(), view.getContext());
+
+            }
+        });
     }
 
+    private void sharePost(String imageUrl, String caption, Context context) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        // Add post data to the intent
+        shareIntent.putExtra(Intent.EXTRA_TEXT, caption + "\n" + imageUrl);
+
+        // Start the sharing activity
+        context.startActivity(Intent.createChooser(shareIntent, "Share post via"));
+    }
 
     @Override
     public int getItemCount() {
@@ -130,7 +154,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         TextView captionTextView;
         TextView usernameTextView;
         ImageView likeIcon;
-        TextView likeText;
+        LinearLayout likeButton;
+        LinearLayout Sharebutton;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -141,7 +166,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
             likeIcon = itemView.findViewById(R.id.likeIcon);
-            likeText = itemView.findViewById(R.id.likeText);
+            likeButton = itemView.findViewById(R.id.like);
+             Sharebutton = itemView.findViewById(R.id.Sharebutton);
         }
     }
 }
