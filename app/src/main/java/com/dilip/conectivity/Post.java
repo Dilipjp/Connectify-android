@@ -8,18 +8,26 @@ public class Post {
     private String userId;
     private long timestamp;
     private int likeCount;
+    private boolean isLiked;
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
 
     public Post() {
         // Default constructor
     }
 
-    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, int likeCount) {
+    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, int likeCount, boolean isLiked) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
         this.timestamp = timestamp;
         this.likeCount= likeCount;
+        this.isLiked=false;
+
     }
 
     // Getters and setters
@@ -70,5 +78,10 @@ public class Post {
     public void setLikeCount(int likeCount) {
         this.likeCount = likeCount;
     }
+
+    public void setLiked(boolean liked) {
+        this.isLiked = liked;
+    }
+
 
 }

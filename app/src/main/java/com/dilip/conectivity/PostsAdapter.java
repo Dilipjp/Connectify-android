@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
@@ -76,18 +77,34 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         // Set like count
         holder.likeCountTextView.setText(post.getLikeCount() + " Likes");
 
+        // Update like button UI based on whether the post is liked
+        holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
+
         // Handle like button click
         holder.likeButton.setOnClickListener(v -> {
-            // Increment like count and update Firebase
-            int newLikeCount = post.getLikeCount() + 1;
-            post.setLikeCount(newLikeCount);
+            boolean isCurrentlyLiked = post.isLiked();
+            int newLikeCount;
+
+            if (isCurrentlyLiked) {
+                // Unlike the post
+                newLikeCount = post.getLikeCount() - 1;
+                post.setLiked(false); // Update local state
+            } else {
+                // Like the post
+                newLikeCount = post.getLikeCount() + 1;
+                post.setLiked(true); // Update local state
+            }
+
+            post.setLikeCount(newLikeCount); // Update the like count
 
             // Update the Firebase database
             DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
             postsRef.child(post.getPostId()).child("likeCount").setValue(newLikeCount);
+            postsRef.child(post.getPostId()).child("isLiked").setValue(post.isLiked());
 
             // Update like count on the UI
             holder.likeCountTextView.setText(newLikeCount + " Likes");
+            holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
         });
     }
 
