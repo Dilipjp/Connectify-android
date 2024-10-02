@@ -8,12 +8,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
@@ -78,8 +81,41 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         if (post.getLikes() != null && post.getLikes().contains(currentUserId)) {
             holder.likeIcon.setImageResource(R.drawable.like); // Set the liked icon
         } else {
-            holder.likeIcon.setImageResource(R.drawable.ic_like_outline); // Set the unlike icon
+            holder.likeIcon.setImageResource(R.drawable.unlike); // Set the unlike icon
         }
+        holder.likeText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(post.getPostId());
+                postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Post post = dataSnapshot.getValue(Post.class);
+                            List<String> likes = post.getLikes();
+                            if (likes == null) {
+                                likes = new ArrayList<>();
+                            }
+                            if (likes.contains(currentUserId)) {
+                                likes.remove(currentUserId);
+                                holder.likeIcon.setImageResource(R.drawable.unlike);
+                            } else {
+                                // Like
+                                likes.add(currentUserId);
+                                holder.likeIcon.setImageResource(R.drawable.like);
+                            }
+                            post.setLikes(likes);
+                            postRef.setValue(post);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle error
+                    }
+                });
+            }
+        });
     }
 
 
@@ -93,6 +129,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         ImageView userProfileImageView;
         TextView captionTextView;
         TextView usernameTextView;
+        ImageView likeIcon;
+        TextView likeText;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,6 +140,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
+            likeIcon = itemView.findViewById(R.id.likeIcon);
+            likeText = itemView.findViewById(R.id.likeText);
         }
     }
 }
