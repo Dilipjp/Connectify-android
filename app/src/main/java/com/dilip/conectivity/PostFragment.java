@@ -74,14 +74,19 @@ public class PostFragment extends Fragment {
         postCommentButton.setOnClickListener(v -> {
             String commentText = commentEditText.getText().toString().trim();
             if (!TextUtils.isEmpty(commentText)) {
-                postComment(postId, commentText);
-                commentEditText.setText("");
+               postComment(postId, commentText);
+                commentEditText.setText(""); // Clear the input field after posting
+            } else {
+                commentEditText.setError("Comment cannot be empty");
             }
         });
 
 
+
         return view;
     }
+
+
 
 
 
@@ -98,6 +103,29 @@ public class PostFragment extends Fragment {
             Picasso.get().load(imageUri).into(postImage);
         }
     }
+
+
+    private void postComment(String postId, String commentText) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get the current user's ID
+        DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
+
+        String commentId = commentsRef.push().getKey(); // Generate a unique ID for the comment
+        long timestamp = System.currentTimeMillis();
+
+        Comment comment = new Comment(commentId, postId, userId, commentText, timestamp);
+
+        // Save the comment to Firebase
+        if (commentId != null) {
+            commentsRef.child(commentId).setValue(comment).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getContext(), "Comment posted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Failed to post comment", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 
     private void uploadPost() {
         String caption = postCaption.getText().toString().trim();
@@ -134,6 +162,8 @@ public class PostFragment extends Fragment {
         });
     }
 
+
+
     private void savePostToDatabase(String postImageUrl, String caption, String userId) {
         String postId = postsRef.push().getKey();
 
@@ -151,23 +181,5 @@ public class PostFragment extends Fragment {
 }
 
 
-//private void postComment(String postId, String commentText) {
-//    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get the current user's ID
-//    DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
-//
-//    String commentId = commentsRef.push().getKey(); // Generate a unique ID for the comment
-//    long timestamp = System.currentTimeMillis();
-//
-//    Comment comment = new Comment(commentId, postId, userId, commentText, timestamp);
-//
-//    // Save the comment to Firebase
-//    if (commentId != null) {
-//        commentsRef.child(commentId).setValue(comment).addOnCompleteListener(task -> {
-//            if (task.isSuccessful())
-//                Toast.makeText(getContext(), "Comment posted!", Toast.LENGTH_SHORT).show();
-//            else {
-//                Toast.makeText(getContext(), "Failed to post comment", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-//}
+
+
