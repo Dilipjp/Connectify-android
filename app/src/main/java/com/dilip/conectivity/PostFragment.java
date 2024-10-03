@@ -1,4 +1,5 @@
 package com.dilip.conectivity;
+
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -23,8 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,10 +54,9 @@ public class PostFragment extends Fragment {
         uploadPostButton = view.findViewById(R.id.uploadPostButton);
         postCaption = view.findViewById(R.id.postCaption);
 
-
         postCommentButton = view.findViewById(R.id.postCommentButton);
-         commentEditText = view.findViewById(R.id.commentEditText);
-         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
+        commentEditText = view.findViewById(R.id.commentEditText);
+        commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
 
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("PostImages");
@@ -69,26 +69,22 @@ public class PostFragment extends Fragment {
         // Upload post
         uploadPostButton.setOnClickListener(v -> uploadPost());
 
-        String postId = "your_post_id";
+        // Assuming you have the post ID available. You might need to pass this via arguments or initialize it some other way.
+        String postId = "your_post_id"; // Replace with actual post ID
 
+        // Post comment action
         postCommentButton.setOnClickListener(v -> {
             String commentText = commentEditText.getText().toString().trim();
             if (!TextUtils.isEmpty(commentText)) {
-               postComment(postId, commentText);
+                postComment(postId, commentText);
                 commentEditText.setText(""); // Clear the input field after posting
             } else {
                 commentEditText.setError("Comment cannot be empty");
             }
         });
 
-
-
         return view;
     }
-
-
-
-
 
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -104,9 +100,8 @@ public class PostFragment extends Fragment {
         }
     }
 
-
     private void postComment(String postId, String commentText) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get the current user's ID
+        String userId = mAuth.getCurrentUser().getUid(); // Get the current user's ID
         DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
 
         String commentId = commentsRef.push().getKey(); // Generate a unique ID for the comment
@@ -125,7 +120,6 @@ public class PostFragment extends Fragment {
             });
         }
     }
-
 
     private void uploadPost() {
         String caption = postCaption.getText().toString().trim();
@@ -162,8 +156,6 @@ public class PostFragment extends Fragment {
         });
     }
 
-
-
     private void savePostToDatabase(String postImageUrl, String caption, String userId) {
         String postId = postsRef.push().getKey();
 
@@ -179,7 +171,3 @@ public class PostFragment extends Fragment {
         }
     }
 }
-
-
-
-

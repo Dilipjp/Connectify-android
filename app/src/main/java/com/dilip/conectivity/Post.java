@@ -1,5 +1,7 @@
 package com.dilip.conectivity;
 
+import java.util.List;
+
 public class Post {
 
     private String postId;
@@ -7,20 +9,29 @@ public class Post {
     private String caption;
     private String userId;
     private long timestamp;
+    private List<Comment> comments;
 
     public Post() {
         // Default constructor
     }
 
-    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp) {
+    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, List<Comment> comments) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
         this.timestamp = timestamp;
+        this.comments = comments;
     }
 
-    // Getters and setters
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+// Getters and setters
 
     public String getPostId() {
         return postId;
@@ -62,4 +73,3 @@ public class Post {
         this.timestamp = timestamp;
     }
 }
-
