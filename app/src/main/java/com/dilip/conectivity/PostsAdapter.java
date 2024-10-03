@@ -89,39 +89,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         } else {
             holder.likeIcon.setImageResource(R.drawable.unlike);
         }
-        holder.likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(post.getPostId());
-                postRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Post post = dataSnapshot.getValue(Post.class);
-                            List<String> likes = post.getLikes();
-                            if (likes == null) {
-                                likes = new ArrayList<>();
-                            }
-                            if (likes.contains(currentUserId)) {
-                                likes.remove(currentUserId);
-                                holder.likeIcon.setImageResource(R.drawable.unlike);
-                            } else {
-                                // Like
-                                likes.add(currentUserId);
-                                holder.likeIcon.setImageResource(R.drawable.like);
-                            }
-                            post.setLikes(likes);
-                            postRef.setValue(post);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle error
-                    }
-                });
-            }
-        });
 
         holder.Sharebutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,8 +140,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
-            likeIcon = itemView.findViewById(R.id.likeIcon);
-            likeButton = itemView.findViewById(R.id.like);
+          //  likeIcon = itemView.findViewById(R.id.likeIcon);
+          //  likeButton = itemView.findViewById(R.id.like);
              Sharebutton = itemView.findViewById(R.id.Sharebutton);
              commentbutton = itemView.findViewById(R.id.commentbutton);
         }

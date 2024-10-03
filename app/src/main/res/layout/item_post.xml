@@ -63,7 +63,7 @@
                 android:id="@+id/like"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-               android:layout_marginRight="20dp"
+                android:layout_marginRight="20dp"
                 >
 
                 <ImageView
@@ -86,7 +86,7 @@
 
 
 
-        <LinearLayout
+            <LinearLayout
             android:id="@+id/commentbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
