@@ -1,12 +1,14 @@
 package com.dilip.conectivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,96 +19,120 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostDetailActivity extends AppCompatActivity {
+
+    private ImageView postImageView;
+    private TextView postCaptionTextView;
     private RecyclerView commentsRecyclerView;
-    private EditText commentEditText;
-    private Button postCommentButton;
     private CommentsAdapter commentsAdapter;
-    private List<Comment> commentsList = new ArrayList<>();
+    private List<Comment> commentsList;
+
+    private DatabaseReference postsRef;
     private String postId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_detail); // Your layout
+        setContentView(R.layout.activity_post_detail);
 
+        postImageView = findViewById(R.id.postImageView);
+        postCaptionTextView = findViewById(R.id.postCaptionTextView);
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
-        commentEditText = findViewById(R.id.commentEditText);
-        postCommentButton = findViewById(R.id.postCommentButton);
+        EditText commentEditText = findViewById(R.id.commentEditText);
+        Button submitCommentButton = findViewById(R.id.submitCommentButton);
 
-        // Initialize RecyclerView
+        // Initialize Firebase Database Reference
+        postsRef = FirebaseDatabase.getInstance().getReference("posts");
+
+        // Get postId from Intent
+        postId = getIntent().getStringExtra("POST_ID");
+
+        // Set up RecyclerView for comments
+        commentsList = new ArrayList<>();
         commentsAdapter = new CommentsAdapter(commentsList);
-        commentsRecyclerView.setAdapter(commentsAdapter);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentsRecyclerView.setAdapter(commentsAdapter);
 
-        // Get the postId from the Intent
-        postId = getIntent().getStringExtra("POST_ID"); // Ensure the key matches how you're passing it
+        // Load post details and comments
+        loadPostDetails(postId);
 
         // Load comments
-        loadComments();
+        loadComments(postId);
 
-        // Post comment action
-        postCommentButton.setOnClickListener(view -> {
-            String commentText = commentEditText.getText().toString();
+        // Set up the button click listener to add a comment
+        submitCommentButton.setOnClickListener(v -> {
+            String commentText = commentEditText.getText().toString().trim();
             if (!commentText.isEmpty()) {
-                postComment(commentText);
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                addComment(postId, commentText, userId);
+                commentEditText.setText("");
             } else {
                 Toast.makeText(PostDetailActivity.this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void postComment(String commentText) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get current user ID
-        String commentId = FirebaseDatabase.getInstance().getReference().push().getKey(); // Generate a unique comment ID
-        long timestamp = System.currentTimeMillis(); // Get current timestamp
+    private void loadPostDetails(String postId) {
+        DatabaseReference postRef = postsRef.child(postId);
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Post post = snapshot.getValue(Post.class);
+                if (post != null) {
+                    Picasso.get().load(post.getPostImageUrl()).into(postImageView);
+                    postCaptionTextView.setText(post.getCaption());
+                }
+            }
 
-        // Create a new comment object with all required fields
-        Comment newComment = new Comment(commentId, postId, userId, commentText, timestamp);
-
-        // Reference to the specific post's comments node in Firebase
-        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
-
-        // Push the new comment to the database
-        postRef.child(commentId).setValue(newComment).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                commentEditText.setText(""); // Clear the input field
-                // Add the new comment to the comments list and refresh the RecyclerView
-                commentsList.add(newComment);
-                commentsAdapter.notifyItemInserted(commentsList.size() - 1);
-                commentsRecyclerView.scrollToPosition(commentsList.size() - 1); // Scroll to the latest comment
-                Toast.makeText(PostDetailActivity.this, "Comment posted!", Toast.LENGTH_SHORT).show();
-            } else {
-                // Log the error
-                Log.e("PostDetailActivity", "Failed to post comment: " + task.getException().getMessage());
-                Toast.makeText(PostDetailActivity.this, "Failed to post comment.", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(PostDetailActivity.this, "Failed to load post details", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    private void loadComments() {
-        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
-
-        postRef.addValueEventListener(new ValueEventListener() {
+    private void loadComments(String postId) {
+        DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
+        commentsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                commentsList.clear(); // Clear the current list of comments
+                commentsList.clear(); // Clear list to avoid duplicate entries
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
-                    commentsList.add(comment); // Add each comment to the list
+                    if (comment != null) {
+                        commentsList.add(comment); // Add comment to list
+                    }
                 }
-                commentsAdapter.notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView
+                commentsAdapter.updateComments(commentsList); // Update the adapter with new data
+                commentsAdapter.notifyDataSetChanged(); // Notify adapter to refresh the RecyclerView
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("PostDetailActivity", "Database Error: " + databaseError.getMessage());
+                Toast.makeText(PostDetailActivity.this, "Failed to load comments", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void addComment(String postId, String commentText, String userId) {
+        DatabaseReference commentsRef = postsRef.child(postId).child("comments");
+        String commentId = commentsRef.push().getKey();
+        Comment comment = new Comment(commentId, postId, userId, commentText);
+
+        if (commentId != null) {
+            commentsRef.child(commentId).setValue(comment)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(PostDetailActivity.this, "Comment added!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(PostDetailActivity.this, "Failed to add comment", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 }

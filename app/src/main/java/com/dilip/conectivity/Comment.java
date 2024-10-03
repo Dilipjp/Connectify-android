@@ -1,32 +1,23 @@
 package com.dilip.conectivity;
 
 public class Comment {
-    private String commentId; // Optional, if you want to keep track of comment IDs
-    private String postId;     // Optional, you may want to associate it with the post
-    private String userId;     // User ID of the commenter
-    private String commentText; // The actual comment text
-    private long timestamp;     // Timestamp for the comment
+    private String commentId;
+    private String postId;
+    private String userId;
+    private String commentText;
 
     // Default constructor (required for Firebase)
     public Comment() {}
 
-    // Constructor for posting comments
-    public Comment(String userId, String commentText) {
-        this.userId = userId;
-        this.commentText = commentText;
-        this.timestamp = System.currentTimeMillis(); // Set current timestamp
-    }
-
-    // Full constructor
-    public Comment(String commentId, String postId, String userId, String commentText, long timestamp) {
+    // Constructor with parameters
+    public Comment(String commentId, String postId, String userId, String commentText) {
         this.commentId = commentId;
         this.postId = postId;
         this.userId = userId;
         this.commentText = commentText;
-        this.timestamp = timestamp;
     }
 
-    // Getters and Setters
+    // Getters and setters (if needed)
     public String getCommentId() {
         return commentId;
     }
@@ -57,13 +48,5 @@ public class Comment {
 
     public void setCommentText(String commentText) {
         this.commentText = commentText;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
     }
 }

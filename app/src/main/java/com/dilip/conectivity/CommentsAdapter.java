@@ -11,10 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
-    private List<Comment> commentsList;
+    private List<Comment> commentList;
 
-    public CommentsAdapter(List<Comment> commentsList) {
-        this.commentsList = commentsList;
+    public CommentsAdapter(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
+    public void updateComments(List<Comment> newComments) {
+        this.commentList = newComments; // Update the comment list
+        notifyDataSetChanged(); // Notify the RecyclerView to refresh
     }
 
     @NonNull
@@ -26,25 +31,21 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        Comment comment = commentsList.get(position);
-        holder.bind(comment);
+        Comment comment = commentList.get(position);
+        holder.commentTextView.setText(comment.getCommentText()); // Display the comment
     }
 
     @Override
     public int getItemCount() {
-        return commentsList.size();
+        return commentList.size();
     }
 
-    static class CommentViewHolder extends RecyclerView.ViewHolder {
-        private TextView commentTextView;
+    public static class CommentViewHolder extends RecyclerView.ViewHolder {
+        TextView commentTextView;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
-            commentTextView = itemView.findViewById(R.id.commentTextView); // Update this with your actual ID
-        }
-
-        public void bind(Comment comment) {
-            commentTextView.setText(comment.getCommentText()); // Use the getter method
+            commentTextView = itemView.findViewById(R.id.commentTextView); // Initialize the TextView
         }
     }
 }
