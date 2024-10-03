@@ -1,4 +1,3 @@
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -51,6 +50,13 @@
         android:text="Caption"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/postContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post content" />
+
+    <!-- Comment Input -->
     <EditText
         android:id="@+id/commentEditText"
         android:layout_width="match_parent"
@@ -58,15 +64,15 @@
         android:hint="Write a comment" />
 
     <Button
-        android:id="@+id/postCommentButton"
+        android:id="@+id/submitCommentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Post" />
+        android:text="Comment" />
 
+    <!-- RecyclerView for Comments -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/commentsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical" />
-
+        android:nestedScrollingEnabled="false" /> <!-- Prevent scrolling issues -->
 </LinearLayout>

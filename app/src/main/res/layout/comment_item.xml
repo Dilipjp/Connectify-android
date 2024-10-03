@@ -9,5 +9,8 @@
         android:id="@+id/commentTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        android:text="Sample comment"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
 </LinearLayout>
