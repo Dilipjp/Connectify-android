@@ -101,22 +101,36 @@ public class PostFragment extends Fragment {
 
     private void submitComment() {
         String commentText = commentEditText.getText().toString().trim();
+
+        // Log the comment text for debugging
+        Log.d("PostFragment", "Comment Text: " + commentText);
+
         if (!TextUtils.isEmpty(commentText)) {
-            String commentId = postsRef.child(postId).child("comments").push().getKey(); // Generate a unique ID for the comment
-            Comment comment = new Comment(commentId, postId, mAuth.getCurrentUser().getUid(), commentText); // No timestamp
+            String commentId = postsRef.child(postId).child("comments").push().getKey(); // Generate unique comment ID
+
+            // Logging the comment path
+            Log.d("PostFragment", "Comment ID: " + commentId);
+
+            Comment comment = new Comment(commentId, postId, mAuth.getCurrentUser().getUid(), commentText);
+
             postsRef.child(postId).child("comments").child(commentId).setValue(comment)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             commentEditText.setText(""); // Clear input
                             Toast.makeText(getContext(), "Comment added!", Toast.LENGTH_SHORT).show();
+                            Log.d("PostFragment", "Comment successfully added to Firebase");
                         } else {
+                            Log.e("PostFragment", "Failed to submit comment", task.getException());
                             Toast.makeText(getContext(), "Failed to submit comment", Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {
             Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+            Log.d("PostFragment", "Comment is empty, cannot submit");
         }
     }
+
+
 
 
     private void openImagePicker() {
@@ -135,14 +149,27 @@ public class PostFragment extends Fragment {
 
     private void loadComments(String postId) {
         DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("comments");
+
+        // Log the path from which comments are being fetched
+        Log.d("PostFragment", "Loading comments from: posts/" + postId + "/comments");
+
         commentsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 commentsList.clear(); // Clear the list to avoid duplicate entries
+
+                // Log if there are any comments
+                if (dataSnapshot.exists()) {
+                    Log.d("PostFragment", "Comments found for post: " + postId);
+                } else {
+                    Log.d("PostFragment", "No comments found for post: " + postId);
+                }
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
                     if (comment != null) {
                         commentsList.add(comment); // Add comment to the list
+                        Log.d("PostFragment", "Comment added to list: " + comment.getCommentText());
                     }
                 }
                 commentsAdapter.updateComments(commentsList); // Update the adapter with new data
@@ -151,10 +178,13 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Log the error
+                Log.e("PostFragment", "Failed to load comments", databaseError.toException());
                 Toast.makeText(getContext(), "Failed to load comments", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     private void uploadPost() {
         String caption = postCaption.getText().toString().trim();
