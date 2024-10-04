@@ -136,7 +136,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     // Save other user details along with image URL
                     saveUserDetails(userName, userBio, imageUrl);
-                });
+                                    });
             }).addOnFailureListener(e -> {
                 // Handle failure
             });
@@ -158,6 +158,7 @@ public class EditProfileActivity extends AppCompatActivity {
         userRef.updateChildren(userDetails).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+
             } else {
                 Toast.makeText(EditProfileActivity.this, "Profile update failed.", Toast.LENGTH_SHORT).show();
             }
