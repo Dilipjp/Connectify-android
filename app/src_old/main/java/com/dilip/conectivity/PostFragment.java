@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -112,21 +111,6 @@ public class PostFragment extends Fragment {
         });
     }
 
-//    private void savePostToDatabase(String postImageUrl, String caption, String userId) {
-//        String postId = postsRef.push().getKey();
-//
-//        Map<String, Object> postDetails = new HashMap<>();
-//        postDetails.put("postId", postId);
-//        postDetails.put("postImageUrl", postImageUrl);
-//        postDetails.put("caption", caption);
-//        postDetails.put("userId", userId);
-//        postDetails.put("timestamp", System.currentTimeMillis());
-//
-//        if (postId != null) {
-//            postsRef.child(postId).setValue(postDetails);
-//        }
-//    }
-
     private void savePostToDatabase(String postImageUrl, String caption, String userId) {
         String postId = postsRef.push().getKey();
 
@@ -138,30 +122,7 @@ public class PostFragment extends Fragment {
         postDetails.put("timestamp", System.currentTimeMillis());
 
         if (postId != null) {
-            // Save the post details to the posts node
-            postsRef.child(postId).setValue(postDetails)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            // Post saved successfully, now update userPosts count
-                            updateUserPostsCount(userId);
-                        } else {
-                            // Handle the error
-                        }
-                    });
+            postsRef.child(postId).setValue(postDetails);
         }
-    }
-
-    private void updateUserPostsCount(String userId) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-
-        // Increment the userPosts count
-        userRef.child("userPosts").setValue(ServerValue.increment(1))
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Successfully updated the userPosts count
-                    } else {
-                        // Handle the error
-                    }
-                });
     }
 }

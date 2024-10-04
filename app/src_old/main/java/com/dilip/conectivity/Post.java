@@ -1,5 +1,7 @@
 package com.dilip.conectivity;
 
+import java.util.List;
+
 public class Post {
 
     private String postId;
@@ -7,6 +9,7 @@ public class Post {
     private String caption;
     private String userId;
     private long timestamp;
+    private List<String> likes;
 
     public Post() {
         // Default constructor
@@ -21,6 +24,14 @@ public class Post {
     }
 
     // Getters and setters
+
+    public List<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
+    }
 
     public String getPostId() {
         return postId;
