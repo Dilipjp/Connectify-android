@@ -1,5 +1,6 @@
 package com.dilip.conectivity;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 // Handle potential errors here
             }
         });
+
+        holder.userProfileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Assuming 'userId' is available in your context
+                String userId = post.getUserId(); // Replace with the actual method to get the user ID
+
+                // Create an Intent to start ProfileActivity
+                Intent intent = new Intent(view.getContext(), ProfileActivity.class);
+                intent.putExtra("USER_ID", userId); // Pass the user ID as an extra
+                view.getContext().startActivity(intent); // Start the activity
+            }
+        });
     }
 
 
@@ -95,7 +109,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
+
+
+
         }
+
     }
 }
 
