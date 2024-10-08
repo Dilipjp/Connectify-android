@@ -1,5 +1,7 @@
 package com.dilip.conectivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dilip.conectivity.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,9 +23,11 @@ import java.util.List;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
 
     private List<Post> postList;
+    private Context context; // Added context for starting new activity
 
-    public PostsAdapter(List<Post> postList) {
+    public PostsAdapter(List<Post> postList, Context context) {
         this.postList = postList;
+        this.context = context; // Initialize context
     }
 
     @NonNull
@@ -106,6 +111,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             holder.likeCountTextView.setText(newLikeCount + " Likes");
             holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
         });
+
+        // Handle clicking on the username or profile image to navigate to the profile
+        View.OnClickListener profileClickListener = v -> {
+            Intent intent = new Intent(context, UserProfileActivity.class);
+            intent.putExtra("profileUserId", post.getUserId()); // Pass the user ID to the profile activity
+            context.startActivity(intent);
+        };
+
+        // Set the same click listener on the username and profile image
+        holder.usernameTextView.setOnClickListener(profileClickListener);
+        holder.userProfileImageView.setOnClickListener(profileClickListener);
     }
 
     @Override

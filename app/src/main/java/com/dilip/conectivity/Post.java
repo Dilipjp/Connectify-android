@@ -10,28 +10,23 @@ public class Post {
     private int likeCount;
     private boolean isLiked;
 
-    public boolean isLiked() {
-        return isLiked;
-    }
-
-
+    // Default constructor (needed for Firebase)
     public Post() {
         // Default constructor
     }
 
+    // Parameterized constructor
     public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, int likeCount, boolean isLiked) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
         this.timestamp = timestamp;
-        this.likeCount= likeCount;
-        this.isLiked=false;
-
+        this.likeCount = likeCount;
+        this.isLiked = isLiked;  // Initialize based on incoming data
     }
 
-    // Getters and setters
-
+    // Getters and Setters
     public String getPostId() {
         return postId;
     }
@@ -71,6 +66,7 @@ public class Post {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+
     public int getLikeCount() {
         return likeCount;
     }
@@ -79,9 +75,11 @@ public class Post {
         this.likeCount = likeCount;
     }
 
+    public boolean isLiked() {
+        return isLiked;
+    }
+
     public void setLiked(boolean liked) {
         this.isLiked = liked;
     }
-
-
 }
