@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Profile Image -->
+    <ImageView
+        android:id="@+id/userProfileImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_dummy_profile"
+        android:layout_marginTop="30dp"
+        android:contentDescription="User Profile Image" />
+
+    <!-- Button to Upload Image -->
+    <Button
+        android:id="@+id/changeProfileImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userProfileImage"
+        android:layout_centerHorizontal="true"
+        android:text="Change Profile Picture"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/purple"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Username Field -->
+    <EditText
+        android:id="@+id/userNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/changeProfileImageButton"
+        android:layout_marginTop="20dp"
+        android:hint="Enter your username"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edit_text" />
+
+    <!-- Bio Field -->
+    <EditText
+        android:id="@+id/userBioEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userNameEditText"
+        android:layout_marginTop="20dp"
+        android:hint="Tell us about yourself"
+        android:inputType="textMultiLine"
+        android:minHeight="100dp"
+        android:gravity="top|start"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edit_text" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveProfileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userBioEditText"
+        android:layout_marginTop="20dp"
+        android:text="Save Changes"
+        android:backgroundTint="@color/purple"
+        android:textColor="@android:color/white"
+        android:padding="12dp"/>
+</RelativeLayout>

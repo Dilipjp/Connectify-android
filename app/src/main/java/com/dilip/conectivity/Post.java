@@ -1,7 +1,5 @@
 package com.dilip.conectivity;
 
-import java.util.List;
-
 public class Post {
 
     private String postId;
@@ -9,29 +7,29 @@ public class Post {
     private String caption;
     private String userId;
     private long timestamp;
-    private List<Comment> comments;
+    private int likeCount;
+    private boolean isLiked;
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
 
     public Post() {
         // Default constructor
     }
 
-    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, List<Comment> comments) {
+    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, int likeCount, boolean isLiked) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
         this.timestamp = timestamp;
-        this.comments = comments;
-    }
+        this.likeCount= likeCount;
+        this.isLiked=false;
 
-    public List<Comment> getComments() {
-        return comments;
     }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-// Getters and setters
+    // Getters and setters
 
     public String getPostId() {
         return postId;
@@ -72,4 +70,17 @@ public class Post {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public void setLiked(boolean liked) {
+        this.isLiked = liked;
+    }
+
+
 }
