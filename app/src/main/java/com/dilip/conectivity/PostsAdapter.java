@@ -2,34 +2,29 @@ package com.dilip.conectivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log; // Import Log for debugging
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dilip.conectivity.R;
-import com.dilip.conectivity.UserProfileActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
-    private List<Post> postList;
-    private Context context;
 
-    public PostsAdapter(List<Post> postList, Context context) {
+    private List<Post> postList;
+
+    public PostsAdapter(List<Post> postList) {
         this.postList = postList;
-        this.context = context;
     }
 
     @NonNull
@@ -39,70 +34,80 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         return new PostViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = postList.get(position);
+
+        // Set the post caption
         holder.captionTextView.setText(post.getCaption());
-        Picasso.get().load(post.getPostImageUrl()).into(holder.postImageView);
 
-        loadUserDetails(holder, post.getUserId());
+        // Load post image using Picasso
+        Picasso.get()
+                .load(post.getPostImageUrl())
+                .placeholder(R.drawable.ic_post_placeholder)
+                .error(R.drawable.ic_post_placeholder)
+                .into(holder.postImageView);
 
-        holder.likeCountTextView.setText(post.getLikeCount() + " Likes");
-        holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
-
-        holder.likeButton.setOnClickListener(v -> {
-            boolean isLiked = post.isLiked();
-            int newLikeCount = isLiked ? post.getLikeCount() - 1 : post.getLikeCount() + 1;
-            post.setLiked(!isLiked);
-            post.setLikeCount(newLikeCount);
-
-            // Update Firebase
-            DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(post.getPostId());
-            postRef.child("likeCount").setValue(newLikeCount);
-            postRef.child("isLiked").setValue(!isLiked);
-
-            holder.likeCountTextView.setText(newLikeCount + " Likes");
-            holder.likeButton.setImageResource(!isLiked ? R.drawable.ic_like : R.drawable.ic_like);
-        });
-
-        // Open user profile on username/profile image click
-        View.OnClickListener profileClickListener = v -> {
-            String profileUserId = post.getUserId();
-            Log.d("PostsAdapter", "Clicked user ID: " + profileUserId); // Log the user ID
-
-            // Check if the profileUserId is not null and context is valid
-            if (profileUserId != null && context != null) {
-                Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("profileUserId", profileUserId);
-                context.startActivity(intent);
-            } else {
-                Log.e("PostsAdapter", "User ID is null or context is invalid for post: " + post.getPostId());
-            }
-        };
-        holder.usernameTextView.setOnClickListener(profileClickListener);
-        holder.userProfileImageView.setOnClickListener(profileClickListener);
-    }
-
-    private void loadUserDetails(PostViewHolder holder, String userId) {
+        // Get user details from the 'users' node using the userId
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-        usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        usersRef.child(post.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    // Get user profile image URL and username
                     String userName = dataSnapshot.child("userName").getValue(String.class);
                     String userProfileImageUrl = dataSnapshot.child("userProfileImage").getValue(String.class);
+
+                    // Set the username
                     holder.usernameTextView.setText(userName);
-                    Picasso.get().load(userProfileImageUrl).into(holder.userProfileImageView);
-                } else {
-                    Log.e("PostsAdapter", "User data does not exist for user ID: " + userId);
+
+                    // Load user profile image using Picasso
+                    Picasso.get()
+                            .load(userProfileImageUrl)
+                            .placeholder(R.drawable.ic_profile_placeholder)
+                            .error(R.drawable.ic_profile_placeholder)
+                            .into(holder.userProfileImageView);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("PostsAdapter", "Database error: " + databaseError.getMessage());
+                // Handle potential errors here
             }
         });
+
+        holder.userProfileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Assuming 'userId' is available in your context
+                String userId = post.getUserId(); // Replace with the actual method to get the user ID
+
+                // Create an Intent to start ProfileActivity
+                Intent intent = new Intent(view.getContext(), ProfileActivity.class);
+                intent.putExtra("USER_ID", userId); // Pass the user ID as an extra
+                view.getContext().startActivity(intent); // Start the activity
+            }
+        });
+
+        holder.Sharebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharePost(post.getPostImageUrl(), post.getCaption(), view.getContext());
+
+            }
+        });
+    }
+
+    private void sharePost(String imageUrl, String caption, Context context) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        // Add post data to the intent
+        shareIntent.putExtra(Intent.EXTRA_TEXT, caption + "\n" + imageUrl);
+
+        // Start the sharing activity
+        context.startActivity(Intent.createChooser(shareIntent, "Share post via"));
     }
 
     @Override
@@ -111,17 +116,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     }
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
-        ImageView postImageView, userProfileImageView, likeButton;
-        TextView captionTextView, usernameTextView, likeCountTextView;
-
+        ImageView postImageView;
+        ImageView userProfileImageView;
+        TextView captionTextView;
+        TextView usernameTextView;
+        LinearLayout Sharebutton;
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            // Initialize views
             postImageView = itemView.findViewById(R.id.postImageView);
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
-            likeButton = itemView.findViewById(R.id.likeButton);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
-            likeCountTextView = itemView.findViewById(R.id.likeCountTextView);
+            Sharebutton = itemView.findViewById(R.id.Sharebutton);
+
+
         }
+
     }
 }
