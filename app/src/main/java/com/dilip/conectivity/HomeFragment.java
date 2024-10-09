@@ -1,4 +1,5 @@
 package com.dilip.conectivity;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +35,10 @@ public class HomeFragment extends Fragment {
         postsAdapter = new PostsAdapter(postList);
         postsRecyclerView.setAdapter(postsAdapter);
 
+        // Firebase reference to the "posts" node
         postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
+        // Load posts from Firebase
         loadPosts();
 
         return view;
@@ -45,17 +48,24 @@ public class HomeFragment extends Fragment {
         postsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                postList.clear();
+                postList.clear();  // Clear previous list to avoid duplication
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Post post = snapshot.getValue(Post.class);
-                    postList.add(post);
+                    Post post = snapshot.getValue(Post.class);  // Retrieve the post object
+
+                    if (post != null) {
+                        Long timestamp = snapshot.child("timestamp").getValue(Long.class);  // Fetch timestamp as Long
+                        if (timestamp != null) {
+                            post.setTimestamp(timestamp);  // Set the timestamp in the Post object
+                        }
+                        postList.add(post);  // Add the post to the list
+                    }
                 }
-                postsAdapter.notifyDataSetChanged();
+                postsAdapter.notifyDataSetChanged();  // Notify the adapter to refresh the RecyclerView
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                // Handle error if the Firebase request fails
             }
         });
     }
