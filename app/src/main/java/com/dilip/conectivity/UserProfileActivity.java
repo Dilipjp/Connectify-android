@@ -2,11 +2,15 @@ package com.dilip.conectivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log; // Import Log for debugging
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,95 +19,90 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class UserProfileActivity extends AppCompatActivity {
-    private TextView usernameTextView;
-    private Button followButton;
-    private String profileUserId;
-    private DatabaseReference usersRef;
-    private String currentUserId; // Get this from your authentication method
+    private TextView userNameTextView;
+    private Button followButton; // Declare the follow button
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_profile); // Ensure you have a layout
+        setContentView(R.layout.activity_user_profile);
 
-        usernameTextView = findViewById(R.id.usernameTextView);
-        followButton = findViewById(R.id.followButton); // Your follow/unfollow button
+        // Initialize UI components
+        userNameTextView = findViewById(R.id.userNameTextView);
+        followButton = findViewById(R.id.followButton); // Initialize the follow button
 
-        // Get current user ID
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Set up the follow button click listener
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleFollowButtonClick(); // Call the method to handle follow/unfollow logic
+            }
+        });
 
-        profileUserId = getIntent().getStringExtra("profileUserId");
-
-        // Log the profileUserId
-        Log.d("UserProfileActivity", "Profile User ID: " + profileUserId);
-
-        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-
-        loadUserProfile(); // Call to load user profile
-        setupFollowButton();
+        loadUserProfile(); // Load user profile
     }
 
-    private void loadUserProfile() {
-        usersRef.child(profileUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void handleFollowButtonClick() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userIdToFollow = "some_user_id"; // Replace with actual user ID of the profile being viewed
+
+        // Toggle follow/unfollow action
+        DatabaseReference followsRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(currentUserId)
+                .child("following")
+                .child(userIdToFollow);
+
+        followsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    String username = dataSnapshot.child("username").getValue(String.class);
-                    usernameTextView.setText(username);
-                    // Log the retrieved username
-                    Log.d("UserProfileActivity", "Username: " + username);
-                    // Check if current user follows the profile user
-                    checkIfFollowing();
+                    // Unfollow user
+                    followsRef.removeValue().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            followButton.setText("Follow"); // Update button text
+                        } else {
+                            // Handle error
+                        }
+                    });
                 } else {
-                    Log.d("UserProfileActivity", "No data exists for this user ID");
+                    // Follow user
+                    followsRef.setValue(true).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            followButton.setText("Unfollow"); // Update button text
+                        } else {
+                            // Handle error
+                        }
+                    });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("UserProfileActivity", "Database error: " + databaseError.getMessage());
+                // Handle error
             }
         });
     }
 
-    private void checkIfFollowing() {
-        usersRef.child(currentUserId).child("following").child(profileUserId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            followButton.setText("Unfollow");
-                        } else {
-                            followButton.setText("Follow");
-                        }
+    private void loadUserProfile() {
+        String userId = "some_user_id"; // Replace with actual user ID
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String username = dataSnapshot.child("userName").getValue(String.class);
+                    if (userNameTextView != null) {
+                        userNameTextView.setText(username != null ? username : "No username available");
                     }
+                } else {
+                    userNameTextView.setText("User not found");
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("UserProfileActivity", "Database error: " + databaseError.getMessage());
-                    }
-                });
-    }
-
-    private void setupFollowButton() {
-        followButton.setOnClickListener(v -> {
-            // Toggle follow/unfollow state
-            if (followButton.getText().toString().equals("Follow")) {
-                followUser();
-            } else {
-                unfollowUser();
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
             }
         });
-    }
-
-    private void followUser() {
-        usersRef.child(currentUserId).child("following").child(profileUserId).setValue(true);
-        followButton.setText("Unfollow");
-    }
-
-    private void unfollowUser() {
-        usersRef.child(currentUserId).child("following").child(profileUserId).removeValue();
-        followButton.setText("Follow");
     }
 }
