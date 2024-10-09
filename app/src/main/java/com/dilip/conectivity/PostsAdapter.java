@@ -1,9 +1,12 @@
 package com.dilip.conectivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +17,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
@@ -32,6 +34,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         return new PostViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = postList.get(position);
@@ -42,8 +45,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         // Load post image using Picasso
         Picasso.get()
                 .load(post.getPostImageUrl())
-                .placeholder(R.drawable.ic_profile_placeholder)
-                .error(R.drawable.ic_profile_placeholder)
+                .placeholder(R.drawable.ic_post_placeholder)
+                .error(R.drawable.ic_post_placeholder)
                 .into(holder.postImageView);
 
         // Get user details from the 'users' node using the userId
@@ -74,38 +77,37 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             }
         });
 
-        // Set like count
-        holder.likeCountTextView.setText(post.getLikeCount() + " Likes");
+        holder.userProfileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Assuming 'userId' is available in your context
+                String userId = post.getUserId(); // Replace with the actual method to get the user ID
 
-        // Update like button UI based on whether the post is liked
-        holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
-
-        // Handle like button click
-        holder.likeButton.setOnClickListener(v -> {
-            boolean isCurrentlyLiked = post.isLiked();
-            int newLikeCount;
-
-            if (isCurrentlyLiked) {
-                // Unlike the post
-                newLikeCount = post.getLikeCount() - 1;
-                post.setLiked(false); // Update local state
-            } else {
-                // Like the post
-                newLikeCount = post.getLikeCount() + 1;
-                post.setLiked(true); // Update local state
+                // Create an Intent to start ProfileActivity
+                Intent intent = new Intent(view.getContext(), ProfileActivity.class);
+                intent.putExtra("USER_ID", userId); // Pass the user ID as an extra
+                view.getContext().startActivity(intent); // Start the activity
             }
-
-            post.setLikeCount(newLikeCount); // Update the like count
-
-            // Update the Firebase database
-            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
-            postsRef.child(post.getPostId()).child("likeCount").setValue(newLikeCount);
-            postsRef.child(post.getPostId()).child("isLiked").setValue(post.isLiked());
-
-            // Update like count on the UI
-            holder.likeCountTextView.setText(newLikeCount + " Likes");
-            holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
         });
+
+        holder.Sharebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharePost(post.getPostImageUrl(), post.getCaption(), view.getContext());
+
+            }
+        });
+    }
+
+    private void sharePost(String imageUrl, String caption, Context context) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        // Add post data to the intent
+        shareIntent.putExtra(Intent.EXTRA_TEXT, caption + "\n" + imageUrl);
+
+        // Start the sharing activity
+        context.startActivity(Intent.createChooser(shareIntent, "Share post via"));
     }
 
     @Override
@@ -116,21 +118,21 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     static class PostViewHolder extends RecyclerView.ViewHolder {
         ImageView postImageView;
         ImageView userProfileImageView;
-        ImageView likeButton;
         TextView captionTextView;
         TextView usernameTextView;
-        TextView likeCountTextView;
-
+        LinearLayout Sharebutton;
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
 
             // Initialize views
             postImageView = itemView.findViewById(R.id.postImageView);
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
-            likeButton = itemView.findViewById(R.id.likeButton);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
-            likeCountTextView = itemView.findViewById(R.id.likeCountTextView);
+            Sharebutton = itemView.findViewById(R.id.Sharebutton);
+
+
         }
+
     }
 }
