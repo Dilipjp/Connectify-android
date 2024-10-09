@@ -1,15 +1,12 @@
 package com.dilip.conectivity;
-
 public class Post {
-
     private String postId;
     private String postImageUrl;
     private String caption;
     private String userId;
-    private long timestamp;
+    private long timestamp;  // Make sure this is a 'long'
 
     public Post() {
-        // Default constructor
     }
 
     public Post(String postId, String postImageUrl, String caption, String userId, long timestamp) {
@@ -17,10 +14,8 @@ public class Post {
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp;  // Ensure that the constructor accepts 'long'
     }
-
-    // Getters and setters
 
     public String getPostId() {
         return postId;
@@ -54,12 +49,13 @@ public class Post {
         this.userId = userId;
     }
 
-    public long getTimestamp() {
+    public long getTimestamp() {  // Ensure getter returns 'long'
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(long timestamp) {  // Ensure setter accepts 'long'
         this.timestamp = timestamp;
     }
 }
+
 
