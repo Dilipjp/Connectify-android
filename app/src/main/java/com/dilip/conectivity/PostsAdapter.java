@@ -1,5 +1,6 @@
 package com.dilip.conectivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,8 +105,26 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 view.getContext().startActivity(intent); // Start the activity
             }
         });
+
+        holder.Sharebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharePost(post.getPostImageUrl(), post.getCaption(), view.getContext());
+
+            }
+        });
     }
 
+    private void sharePost(String imageUrl, String caption, Context context) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        // Add post data to the intent
+        shareIntent.putExtra(Intent.EXTRA_TEXT, caption + "\n" + imageUrl);
+
+        // Start the sharing activity
+        context.startActivity(Intent.createChooser(shareIntent, "Share post via"));
+    }
 
     @Override
     public int getItemCount() {
@@ -119,7 +138,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         TextView usernameTextView;
         TextView locationTextView;
         LinearLayout locationLayout;
-
+        LinearLayout Sharebutton;
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -130,11 +149,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
             locationLayout = itemView.findViewById(R.id.locationLayout);
             locationTextView = itemView.findViewById(R.id.locationTextView);
-
+            Sharebutton = itemView.findViewById(R.id.Sharebutton);
 
 
         }
 
     }
 }
-
