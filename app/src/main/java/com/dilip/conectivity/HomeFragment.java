@@ -53,10 +53,6 @@ public class HomeFragment extends Fragment {
                     Post post = snapshot.getValue(Post.class);  // Retrieve the post object
 
                     if (post != null) {
-                        Long timestamp = snapshot.child("timestamp").getValue(Long.class);  // Fetch timestamp as Long
-                        if (timestamp != null) {
-                            post.setTimestamp(timestamp);  // Set the timestamp in the Post object
-                        }
                         postList.add(post);  // Add the post to the list
                     }
                 }
