@@ -4,17 +4,19 @@ public class Post {
     private String postImageUrl;
     private String caption;
     private String userId;
-    private long timestamp;  // Make sure this is a 'long'
+    private long timestamp;
+    private  String  locationName;
 
     public Post() {
     }
 
-    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp) {
+    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, String locationName) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
-        this.timestamp = timestamp;  // Ensure that the constructor accepts 'long'
+        this.timestamp = timestamp;
+        this.locationName = locationName;
     }
 
     public String getPostId() {
@@ -55,6 +57,14 @@ public class Post {
 
     public void setTimestamp(long timestamp) {  // Ensure setter accepts 'long'
         this.timestamp = timestamp;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 }
 

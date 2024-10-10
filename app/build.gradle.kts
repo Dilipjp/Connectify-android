@@ -45,6 +45,8 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.google.android.libraries.places:places:2.6.0") // Add this line
+
 
 
 }
