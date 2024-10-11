@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 public class UserProfileActivity extends AppCompatActivity {
     private TextView userNameTextView;
     private Button followButton;
-    private String userIdToFollow = "some_user_id"; // Replace with actual user ID you are viewing
+    private String userIdToFollow; // Declare userIdToFollow without initializing it here
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,9 @@ public class UserProfileActivity extends AppCompatActivity {
         userNameTextView = findViewById(R.id.userNameTextView);
         followButton = findViewById(R.id.followButton);
 
-
+        // Get the user ID passed from the previous activity
+        userIdToFollow = getIntent().getStringExtra("userIdToFollow");
+        Log.d("UserProfileActivity", "Received user ID: " + userIdToFollow);
 
         followButton.setOnClickListener(v -> handleFollowButtonClick());
 
@@ -47,15 +49,9 @@ public class UserProfileActivity extends AppCompatActivity {
                     String username = dataSnapshot.child("userName").getValue(String.class);
                     // Set the username in the TextView
                     userNameTextView.setText(username != null ? username : "No username available");
-
-                    // Optional: Display additional user information if needed
-                    // For example, if you have more fields in your database
-                    // String bio = dataSnapshot.child("bio").getValue(String.class);
-                    // bioTextView.setText(bio != null ? bio : "No bio available");
-
                 } else {
-                    // If user doesn't exist in the database, display "User not found"
                     userNameTextView.setText("User not found");
+                    Log.e("UserProfileActivity", "User not found in database for ID: " + userIdToFollow);
                 }
             }
 
@@ -65,6 +61,7 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     private void checkFollowStatus() {
@@ -129,3 +126,4 @@ public class UserProfileActivity extends AppCompatActivity {
         });
     }
 }
+

@@ -32,4 +32,21 @@
         android:text="Follow"
         android:layout_gravity="center"
         android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/followersCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Followers: 0"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/followingCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Following: 0"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"/>
+
 </LinearLayout>

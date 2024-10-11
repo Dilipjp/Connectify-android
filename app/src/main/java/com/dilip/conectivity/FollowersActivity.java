@@ -1,5 +1,7 @@
 package com.dilip.conectivity;
 
+import static android.content.Intent.getIntent;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 

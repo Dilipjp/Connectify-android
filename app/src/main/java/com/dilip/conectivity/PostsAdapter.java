@@ -73,12 +73,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             // Check if the profileUserId is not null and context is valid
             if (profileUserId != null && context != null) {
                 Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("profileUserId", profileUserId);
+                intent.putExtra("userIdToFollow", profileUserId); // Ensure the key matches what you expect in UserProfileActivity
                 context.startActivity(intent);
             } else {
                 Log.e("PostsAdapter", "User ID is null or context is invalid for post: " + post.getPostId());
             }
         };
+
+        // Set the click listener on both username and profile image
         holder.usernameTextView.setOnClickListener(profileClickListener);
         holder.userProfileImageView.setOnClickListener(profileClickListener);
     }
