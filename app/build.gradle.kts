@@ -50,6 +50,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-database")
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.firebase:firebase-storage")
+    implementation ("com.google.android.libraries.places:places:2.6.0") // Add this line
 
 
 }

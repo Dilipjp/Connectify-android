@@ -1,47 +1,42 @@
 package com.dilip.conectivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private RecyclerView recyclerView;
+    private RecyclerView postsRecyclerView;
     private PostsAdapter postsAdapter;
-    private List<Post> postList; // List to hold posts
+    private List<Post> postList;
+    private DatabaseReference postsRef;
 
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        recyclerView = view.findViewById(R.id.recyclerView); // Ensure this ID exists in the XML layout
 
-        // Initialize postList
+        postsRecyclerView = view.findViewById(R.id.postsRecyclerView);
+        postsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         postList = new ArrayList<>();
+        postsAdapter = new PostsAdapter(postList);
+        postsRecyclerView.setAdapter(postsAdapter);
 
-        // Initialize PostsAdapter with context and postList
-        postsAdapter = new PostsAdapter(postList, requireContext());
-
-        // Set up RecyclerView
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(postsAdapter);
+        // Firebase reference to the "posts" node
+        postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
         // Load posts from Firebase
         loadPosts();
@@ -50,31 +45,23 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadPosts() {
-        DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
-        postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        postsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Clear the existing postList
-                postList.clear();
+                postList.clear();  // Clear previous list to avoid duplication
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post post = snapshot.getValue(Post.class);  // Retrieve the post object
 
-                // Loop through the posts and add them to the postList
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Post post = postSnapshot.getValue(Post.class);
                     if (post != null) {
-                        postList.add(post);
-                    } else {
-                        Log.e("HomeFragment", "Post data is null for: " + postSnapshot.getKey());
+                        postList.add(post);  // Add the post to the list
                     }
                 }
-
-                // Notify the adapter about data changes
-                postsAdapter.notifyDataSetChanged();
+                postsAdapter.notifyDataSetChanged();  // Notify the adapter to refresh the RecyclerView
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle potential errors here
-                Log.e("HomeFragment", "Database error: " + databaseError.getMessage());
+                // Handle error if the Firebase request fails
             }
         });
     }

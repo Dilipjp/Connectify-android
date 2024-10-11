@@ -2,34 +2,29 @@ package com.dilip.conectivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log; // Import Log for debugging
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dilip.conectivity.R;
-import com.dilip.conectivity.UserProfileActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
-    private List<Post> postList;
-    private Context context;
 
-    public PostsAdapter(List<Post> postList, Context context) {
+    private List<Post> postList;
+
+    public PostsAdapter(List<Post> postList) {
         this.postList = postList;
-        this.context = context;
     }
 
     @NonNull
@@ -39,17 +34,29 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         return new PostViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = postList.get(position);
+
+        // Set the post caption
         holder.captionTextView.setText(post.getCaption());
-        Picasso.get().load(post.getPostImageUrl()).into(holder.postImageView);
 
-        loadUserDetails(holder, post.getUserId());
+        // Load post image using Picasso
+        Picasso.get()
+                .load(post.getPostImageUrl())
+                .placeholder(R.drawable.ic_post_placeholder)
+                .error(R.drawable.ic_post_placeholder)
+                .into(holder.postImageView);
 
-        holder.likeCountTextView.setText(post.getLikeCount() + " Likes");
-        holder.likeButton.setImageResource(post.isLiked() ? R.drawable.ic_like : R.drawable.ic_like);
+                    if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
+                        holder.locationTextView.setText(post.getLocationName());
+                        holder.locationLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.locationLayout.setVisibility(View.GONE);
+                    }
 
+<<<<<<< HEAD
         holder.likeButton.setOnClickListener(v -> {
             boolean isLiked = post.isLiked();
             int newLikeCount = isLiked ? post.getLikeCount() - 1 : post.getLikeCount() + 1;
@@ -86,25 +93,76 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     }
 
     private void loadUserDetails(PostViewHolder holder, String userId) {
+=======
+        // Get user details from the 'users' node using the userId
+>>>>>>> 1f2d823ab065cee6bb6c61826270c4f386a9c0f9
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-        usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        usersRef.child(post.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
+
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    // Get user profile image URL, username, and locationName safely
                     String userName = dataSnapshot.child("userName").getValue(String.class);
                     String userProfileImageUrl = dataSnapshot.child("userProfileImage").getValue(String.class);
-                    holder.usernameTextView.setText(userName);
-                    Picasso.get().load(userProfileImageUrl).into(holder.userProfileImageView);
-                } else {
-                    Log.e("PostsAdapter", "User data does not exist for user ID: " + userId);
+
+                    // Set the username if available
+                    if (userName != null) {
+                        holder.usernameTextView.setText(userName);
+                    }
+                    // Load user profile image safely
+                    if (userProfileImageUrl != null && !userProfileImageUrl.isEmpty()) {
+                        Picasso.get()
+                                .load(userProfileImageUrl)
+                                .placeholder(R.drawable.ic_profile_placeholder)  // Show placeholder while loading
+                                .error(R.drawable.ic_profile_placeholder)  // Fallback image in case of error
+                                .into(holder.userProfileImageView);
+                    } else {
+                        // If no profile image, set the placeholder directly
+                        holder.userProfileImageView.setImageResource(R.drawable.ic_profile_placeholder);
+                    }
                 }
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("PostsAdapter", "Database error: " + databaseError.getMessage());
+                // Handle potential errors here
             }
         });
+
+        holder.userProfileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Assuming 'userId' is available in your context
+                String userId = post.getUserId(); // Replace with the actual method to get the user ID
+
+                // Create an Intent to start ProfileActivity
+                Intent intent = new Intent(view.getContext(), ProfileActivity.class);
+                intent.putExtra("USER_ID", userId); // Pass the user ID as an extra
+                view.getContext().startActivity(intent); // Start the activity
+            }
+        });
+
+        holder.Sharebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharePost(post.getPostImageUrl(), post.getCaption(), view.getContext());
+
+            }
+        });
+    }
+
+    private void sharePost(String imageUrl, String caption, Context context) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        // Add post data to the intent
+        shareIntent.putExtra(Intent.EXTRA_TEXT, caption + "\n" + imageUrl);
+
+        // Start the sharing activity
+        context.startActivity(Intent.createChooser(shareIntent, "Share post via"));
     }
 
     @Override
@@ -113,17 +171,27 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     }
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
-        ImageView postImageView, userProfileImageView, likeButton;
-        TextView captionTextView, usernameTextView, likeCountTextView;
-
+        ImageView postImageView;
+        ImageView userProfileImageView;
+        TextView captionTextView;
+        TextView usernameTextView;
+        TextView locationTextView;
+        LinearLayout locationLayout;
+        LinearLayout Sharebutton;
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            // Initialize views
             postImageView = itemView.findViewById(R.id.postImageView);
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
-            likeButton = itemView.findViewById(R.id.likeButton);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
-            likeCountTextView = itemView.findViewById(R.id.likeCountTextView);
+            locationLayout = itemView.findViewById(R.id.locationLayout);
+            locationTextView = itemView.findViewById(R.id.locationTextView);
+            Sharebutton = itemView.findViewById(R.id.Sharebutton);
+
+
         }
+
     }
 }
