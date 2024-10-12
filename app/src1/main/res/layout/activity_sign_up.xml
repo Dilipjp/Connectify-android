@@ -1,0 +1,180 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <!-- App Logo -->
+    <ImageView
+        android:id="@+id/appLogo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_connectify_logo"
+        android:layout_marginTop="40dp" />
+
+    <!-- Nice Text Below Logo -->
+    <TextView
+        android:id="@+id/niceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Journey to Connectivity Begins Here!"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_below="@id/appLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/purple" />
+
+    <!-- User Name Field -->
+    <EditText
+        android:id="@+id/userNameEditText"
+        android:hint="Username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:layout_below="@id/niceText"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/rounded_edit_text"
+        android:padding="12dp" />
+
+    <!-- Email Field -->
+    <EditText
+        android:id="@+id/emailEditText"
+        android:hint="Email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:layout_below="@id/userNameEditText"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edit_text"
+        android:padding="12dp" />
+
+    <!-- Password Field -->
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:hint="Password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:layout_below="@id/emailEditText"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edit_text"
+        android:padding="12dp" />
+
+    <!-- Confirm Password Field -->
+    <EditText
+        android:id="@+id/confirmPasswordEditText"
+        android:hint="Confirm Password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:layout_below="@id/passwordEditText"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edit_text"
+        android:padding="12dp" />
+
+    <!-- Bio Field -->
+    <EditText
+        android:id="@+id/userBioEditText"
+        android:hint="Bio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:layout_below="@id/confirmPasswordEditText"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edit_text"
+        android:padding="12dp"
+        android:minHeight="100dp"
+        android:gravity="top|start"
+        android:scrollbars="vertical" />
+
+
+    <!-- User Type Selection -->
+    <LinearLayout
+        android:layout_below="@id/userBioEditText"
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/selectRoleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Role"
+            android:textColor="@color/black"
+            android:layout_marginEnd="16dp" /> <!-- Added margin for spacing -->
+
+        <RadioGroup
+            android:id="@+id/roleRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/userRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User"
+                android:textColor="@color/black"
+                android:layout_marginEnd="24dp" /> <!-- Added margin for spacing -->
+
+            <RadioButton
+                android:id="@+id/moderatorRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Moderator"
+                android:textColor="@color/black" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- Error Message TextView -->
+    <TextView
+        android:id="@+id/successTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radioGroup"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/holo_purple"
+        android:textSize="14sp"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/successTextView"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="14sp"
+        android:visibility="gone" /> <!-- Hidden by default -->
+
+
+
+    <!-- Sign Up Button -->
+    <Button
+        android:id="@+id/signUpButton"
+        android:text="Sign Up"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/errorTextView"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/purple"
+        android:textColor="@android:color/white"
+        android:padding="12dp" />
+
+    <!-- Sign In Link -->
+    <TextView
+        android:id="@+id/signInTextView"
+        android:text="Already have an account? Sign In"
+        android:textColor="@color/purple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signUpButton"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:clickable="true" />
+
+</RelativeLayout>
