@@ -21,11 +21,11 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView userName, userEmail, userPhone, userBio;
+    private TextView userName, userEmail, userPhone, userBio, userPosts;
     private ImageView profileImage;
     private Button signOutButton, editProfileButton;
     private FirebaseAuth mAuth;
-    private DatabaseReference usersRef;
+    private DatabaseReference usersRef, postsRef;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -39,17 +39,22 @@ public class ProfileFragment extends Fragment {
         // Initialize Firebase and UI elements
         mAuth = FirebaseAuth.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+        postsRef = FirebaseDatabase.getInstance().getReference("posts");  // Reference to posts node
+
 
         userName = view.findViewById(R.id.userName);
         userEmail = view.findViewById(R.id.userEmail);
         userPhone = view.findViewById(R.id.userPhone);
         userBio = view.findViewById(R.id.userBio);
         profileImage = view.findViewById(R.id.profileImage);
+        userPosts = view.findViewById(R.id.userPosts);
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
 
         // Load user details from Firebase Realtime Database
         loadUserDetails();
+        // Load post count for the current user
+        loadPostCount();
 
         // Sign out functionality
         signOutButton.setOnClickListener(v -> {
@@ -95,6 +100,23 @@ public class ProfileFragment extends Fragment {
                 }
             }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error, e.g., show a Toast message
+            }
+        });
+    }
+    private void loadPostCount()
+
+    {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        postsRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long postCount = dataSnapshot.getChildrenCount();
+                userPosts.setText(postCount + " Posts");
+            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle error, e.g., show a Toast message
