@@ -1,35 +1,23 @@
 package com.dilip.conectivity;
-
 public class Post {
-
     private String postId;
     private String postImageUrl;
     private String caption;
     private String userId;
     private long timestamp;
-    private int likeCount;
-    private boolean isLiked;
-
-    public boolean isLiked() {
-        return isLiked;
-    }
-
+    private  String  locationName;
 
     public Post() {
-        // Default constructor
     }
 
-    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, int likeCount, boolean isLiked) {
+    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, String locationName) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
         this.timestamp = timestamp;
-        this.likeCount= likeCount;
-        this.isLiked=false;
-
+        this.locationName = locationName;
     }
-    // Getters and setters
 
     public String getPostId() {
         return postId;
@@ -63,24 +51,21 @@ public class Post {
         this.userId = userId;
     }
 
-    public long getTimestamp() {
+    public long getTimestamp() {  // Ensure getter returns 'long'
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(long timestamp) {  // Ensure setter accepts 'long'
         this.timestamp = timestamp;
     }
-    public int getLikeCount() {
-        return likeCount;
+
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
-
-    public void setLiked(boolean liked) {
-        this.isLiked = liked;
-    }
-
-
 }
+
+
