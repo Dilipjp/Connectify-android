@@ -1,13 +1,13 @@
 package com.dilip.conectivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,88 +23,70 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FollowersFragment extends Fragment {
-    private RecyclerView followersRecyclerView;
-    private TextView emptyView;
-    private FollowersAdapter followersAdapter;
-    private List<User> followersList;
+
+    private RecyclerView usersRecyclerView;
+    private FollowerAdapter followersAdapter;
+    private List<User> userList;
     private DatabaseReference usersRef;
+    private FirebaseAuth mAuth;
 
-    @Nullable
+    public FollowersFragment() {
+        // Required empty public constructor
+    }
+
+    @SuppressLint("MissingInflatedId")
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_followers_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_followers, container, false);
 
-        // Initialize UI components
-        followersRecyclerView = view.findViewById(R.id.followersRecyclerView);
-        emptyView = view.findViewById(R.id.emptyView);
+        // Initialize views
+        usersRecyclerView = view.findViewById(R.id.usersRecyclerView);
+        usersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext())); // Set LayoutManager for RecyclerView
 
-        // Initialize Firebase Database reference
-        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        // Initialize user list and adapter
+        userList = new ArrayList<>(); // Initialize the user list
+        followersAdapter = new FollowerAdapter(userList); // Create adapter with user list
+        usersRecyclerView.setAdapter(followersAdapter); // Set the adapter to the RecyclerView
 
-        // Set up RecyclerView
-        followersList = new ArrayList<>();
-        followersAdapter = new FollowersAdapter(followersList, getActivity()); // Pass context here
-        followersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        followersRecyclerView.setAdapter(followersAdapter);
+        // Initialize Firebase references
+        mAuth = FirebaseAuth.getInstance(); // Get Firebase Auth instance
+        String currentUserId = mAuth.getCurrentUser().getUid(); // Get the current user's ID
+        usersRef = FirebaseDatabase.getInstance().getReference("users"); // Reference to the users node
 
-        // Load followers
-        loadFollowers();
+        // Load all users
+        loadUsers(); // Call method to load users from Firebase
 
         return view;
     }
 
-    private void loadFollowers() {
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        usersRef.child(currentUserId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
+    private void loadUsers() {
+        usersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                followersList.clear(); // Clear the current list
+                userList.clear(); // Clear the list before adding
+                String currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null; // Safely get current user ID
 
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot followerSnapshot : dataSnapshot.getChildren()) {
-                        String followerId = followerSnapshot.getKey();
-                        loadFollowerDetails(followerId);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+
+                    if (user != null) {
+                        // Ensure userId is set from the snapshot key
+                        user.setUserId(snapshot.getKey());
+
+                        if (!user.getUserId().equals(currentUserId)) {
+                            userList.add(user);
+                        }
                     }
-                } else {
-                    // Show empty view if there are no followers
-                    emptyView.setVisibility(View.VISIBLE);
-                    followersRecyclerView.setVisibility(View.GONE);
                 }
+
+                followersAdapter.notifyDataSetChanged(); // Refresh RecyclerView
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle database error
-            }
-        });
-    }
-
-    private void loadFollowerDetails(String followerId) {
-        usersRef.child(followerId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    User follower = dataSnapshot.getValue(User.class);
-                    if (follower != null) {
-                        followersList.add(follower);
-                    }
-
-                    // Notify adapter of data changes
-                    followersAdapter.notifyDataSetChanged();
-
-                    // Hide empty view if we have followers now
-                    if (!followersList.isEmpty()) {
-                        emptyView.setVisibility(View.GONE);
-                        followersRecyclerView.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle database error
+                Toast.makeText(getActivity(), "Failed to load users.", Toast.LENGTH_SHORT).show();
             }
         });
     }

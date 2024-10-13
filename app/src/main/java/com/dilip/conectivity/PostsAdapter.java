@@ -49,53 +49,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 .error(R.drawable.ic_post_placeholder)
                 .into(holder.postImageView);
 
-                    if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
-                        holder.locationTextView.setText(post.getLocationName());
-                        holder.locationLayout.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.locationLayout.setVisibility(View.GONE);
-                    }
+        if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
+            holder.locationTextView.setText(post.getLocationName());
+            holder.locationLayout.setVisibility(View.VISIBLE);
+        } else {
+            holder.locationLayout.setVisibility(View.GONE);
+        }
 
-<<<<<<< HEAD
-        holder.likeButton.setOnClickListener(v -> {
-            boolean isLiked = post.isLiked();
-            int newLikeCount = isLiked ? post.getLikeCount() - 1 : post.getLikeCount() + 1;
-            post.setLiked(!isLiked);
-            post.setLikeCount(newLikeCount);
-
-            // Update Firebase
-            DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(post.getPostId());
-            postRef.child("likeCount").setValue(newLikeCount);
-            postRef.child("isLiked").setValue(!isLiked);
-
-            holder.likeCountTextView.setText(newLikeCount + " Likes");
-            holder.likeButton.setImageResource(!isLiked ? R.drawable.ic_like : R.drawable.ic_like);
-        });
-
-        // Open user profile on username/profile image click
-        View.OnClickListener profileClickListener = v -> {
-            String profileUserId = post.getUserId();
-            Log.d("PostsAdapter", "Clicked user ID: " + profileUserId); // Log the user ID
-
-            // Check if the profileUserId is not null and context is valid
-            if (profileUserId != null && context != null) {
-                Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("userIdToFollow", profileUserId); // Ensure the key matches what you expect in UserProfileActivity
-                context.startActivity(intent);
-            } else {
-                Log.e("PostsAdapter", "User ID is null or context is invalid for post: " + post.getPostId());
-            }
-        };
-
-        // Set the click listener on both username and profile image
-        holder.usernameTextView.setOnClickListener(profileClickListener);
-        holder.userProfileImageView.setOnClickListener(profileClickListener);
-    }
-
-    private void loadUserDetails(PostViewHolder holder, String userId) {
-=======
         // Get user details from the 'users' node using the userId
->>>>>>> 1f2d823ab065cee6bb6c61826270c4f386a9c0f9
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         usersRef.child(post.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
