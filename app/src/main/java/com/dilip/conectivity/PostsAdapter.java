@@ -49,27 +49,43 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 .error(R.drawable.ic_post_placeholder)
                 .into(holder.postImageView);
 
+        if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
+            holder.locationTextView.setText(post.getLocationName());
+            holder.locationLayout.setVisibility(View.VISIBLE);
+        } else {
+            holder.locationLayout.setVisibility(View.GONE);
+        }
+
         // Get user details from the 'users' node using the userId
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         usersRef.child(post.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
+
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Get user profile image URL and username
+                    // Get user profile image URL, username, and locationName safely
                     String userName = dataSnapshot.child("userName").getValue(String.class);
                     String userProfileImageUrl = dataSnapshot.child("userProfileImage").getValue(String.class);
 
-                    // Set the username
-                    holder.usernameTextView.setText(userName);
-
-                    // Load user profile image using Picasso
-                    Picasso.get()
-                            .load(userProfileImageUrl)
-                            .placeholder(R.drawable.ic_profile_placeholder)
-                            .error(R.drawable.ic_profile_placeholder)
-                            .into(holder.userProfileImageView);
+                    // Set the username if available
+                    if (userName != null) {
+                        holder.usernameTextView.setText(userName);
+                    }
+                    // Load user profile image safely
+                    if (userProfileImageUrl != null && !userProfileImageUrl.isEmpty()) {
+                        Picasso.get()
+                                .load(userProfileImageUrl)
+                                .placeholder(R.drawable.ic_profile_placeholder)  // Show placeholder while loading
+                                .error(R.drawable.ic_profile_placeholder)  // Fallback image in case of error
+                                .into(holder.userProfileImageView);
+                    } else {
+                        // If no profile image, set the placeholder directly
+                        holder.userProfileImageView.setImageResource(R.drawable.ic_profile_placeholder);
+                    }
                 }
             }
+
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -120,6 +136,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         ImageView userProfileImageView;
         TextView captionTextView;
         TextView usernameTextView;
+        TextView locationTextView;
+        LinearLayout locationLayout;
         LinearLayout Sharebutton;
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,6 +147,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
             captionTextView = itemView.findViewById(R.id.captionTextView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
+            locationLayout = itemView.findViewById(R.id.locationLayout);
+            locationTextView = itemView.findViewById(R.id.locationTextView);
             Sharebutton = itemView.findViewById(R.id.Sharebutton);
 
 
@@ -136,4 +156,3 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
 
     }
 }
-
