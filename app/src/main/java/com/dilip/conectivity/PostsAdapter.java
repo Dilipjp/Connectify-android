@@ -49,12 +49,21 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 .error(R.drawable.ic_post_placeholder)
                 .into(holder.postImageView);
 
+<<<<<<< HEAD
         if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
             holder.locationTextView.setText(post.getLocationName());
             holder.locationLayout.setVisibility(View.VISIBLE);
         } else {
             holder.locationLayout.setVisibility(View.GONE);
         }
+=======
+                    if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
+                        holder.locationTextView.setText(post.getLocationName());
+                        holder.locationLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.locationLayout.setVisibility(View.GONE);
+                    }
+>>>>>>> 8a2c616d44f5bc17f2d47b124eac2ebddb0df47e
 
         // Get user details from the 'users' node using the userId
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
@@ -155,4 +164,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         }
 
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8a2c616d44f5bc17f2d47b124eac2ebddb0df47e

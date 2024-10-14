@@ -1,26 +1,23 @@
 package com.dilip.conectivity;
-
 public class Post {
-
     private String postId;
     private String postImageUrl;
     private String caption;
     private String userId;
     private long timestamp;
+    private  String  locationName;
 
     public Post() {
-        // Default constructor
     }
 
-    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp) {
+    public Post(String postId, String postImageUrl, String caption, String userId, long timestamp, String locationName) {
         this.postId = postId;
         this.postImageUrl = postImageUrl;
         this.caption = caption;
         this.userId = userId;
         this.timestamp = timestamp;
+        this.locationName = locationName;
     }
-
-    // Getters and setters
 
     public String getPostId() {
         return postId;
@@ -54,12 +51,21 @@ public class Post {
         this.userId = userId;
     }
 
-    public long getTimestamp() {
+    public long getTimestamp() {  // Ensure getter returns 'long'
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(long timestamp) {  // Ensure setter accepts 'long'
         this.timestamp = timestamp;
     }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
 }
+
 
