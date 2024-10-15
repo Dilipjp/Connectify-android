@@ -20,6 +20,15 @@
             android:name=".UserPostActivity"
             android:exported="false" />
         <activity
+            android:name=".EditPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Like"
+            android:exported="false" />
+        <activity
+            android:name=".UserPostActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
