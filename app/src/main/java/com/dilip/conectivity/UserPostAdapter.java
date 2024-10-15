@@ -60,7 +60,7 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostAdapter.UserPo
                     postList.remove(position);
                     notifyItemRemoved(position);  // Remove item from RecyclerView
                 } else {
-                    Toast.makeText(holder.itemView.getContext(), "Failed to delete post", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(holder.itemView.getContext(), "Failed to delete the post", Toast.LENGTH_SHORT).show();
                 }
             });
         });
