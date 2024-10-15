@@ -44,7 +44,6 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostAdapter.UserPo
 
 
         holder.editButton.setOnClickListener(v -> {
-            // Navigate to EditPostActivity and pass the post details
             Intent intent = new Intent(holder.itemView.getContext(), EditPostActivity.class);
             intent.putExtra("POST_ID", post.getPostId());
             intent.putExtra("POST_CAPTION", post.getCaption());
