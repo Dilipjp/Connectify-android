@@ -56,7 +56,7 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostAdapter.UserPo
         holder.deleteButton.setOnClickListener(v -> {
             postsRef.child(post.getPostId()).removeValue((databaseError, databaseReference) -> {
                 if (databaseError == null) {
-                    Toast.makeText(holder.itemView.getContext(), "Post deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(holder.itemView.getContext(), "Post is deleted", Toast.LENGTH_SHORT).show();
                     postList.remove(position);
                     notifyItemRemoved(position);  // Remove item from RecyclerView
                 } else {
