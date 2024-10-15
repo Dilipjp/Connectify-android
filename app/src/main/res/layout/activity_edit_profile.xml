@@ -23,7 +23,7 @@
         android:layout_centerHorizontal="true"
         android:text="Change Profile Picture"
         android:textColor="@android:color/white"
-        android:backgroundTint="@color/purple"
+        android:backgroundTint="@color/black"
         android:layout_marginTop="10dp"/>
 
     <!-- Username Field -->
@@ -60,7 +60,7 @@
         android:layout_below="@id/userBioEditText"
         android:layout_marginTop="20dp"
         android:text="Save Changes"
-        android:backgroundTint="@color/purple"
+        android:backgroundTint="@color/black"
         android:textColor="@android:color/white"
         android:padding="12dp"/>
 </RelativeLayout>

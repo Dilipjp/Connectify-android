@@ -33,7 +33,8 @@ public class HomeFragment extends Fragment {
         postsRecyclerView = view.findViewById(R.id.postsRecyclerView);
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         postList = new ArrayList<>();
-        postsAdapter = new PostsAdapter(postList);
+//        postsAdapter = new PostsAdapter(postList);
+        postsAdapter = new PostsAdapter(requireContext(), postList);
         postsRecyclerView.setAdapter(postsAdapter);
 
         // Firebase reference to the "posts" node
