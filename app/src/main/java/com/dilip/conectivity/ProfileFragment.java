@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,13 +21,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProfileFragment extends Fragment {
 
-    private TextView userName, userEmail, userPhone, userBio;
+    private TextView userName, userEmail, userPhone, userBio, postsHeading;
     private ImageView profileImage;
     private Button signOutButton, editProfileButton;
+    private RecyclerView profilePostsRecyclerView;
     private FirebaseAuth mAuth;
-    private DatabaseReference usersRef;
+    private DatabaseReference usersRef, postsRef;
+    private ProfilePostsAdapter postAdapter; // Use new adapter
+    private List<Post> postList;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -39,6 +47,7 @@ public class ProfileFragment extends Fragment {
         // Initialize Firebase and UI elements
         mAuth = FirebaseAuth.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+        postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
         userName = view.findViewById(R.id.userName);
         userEmail = view.findViewById(R.id.userEmail);
@@ -47,18 +56,27 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImage);
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
+        postsHeading = view.findViewById(R.id.postsHeading); // Assuming this is the ID for your posts label
+        postsHeading.setText("Your Posts");
 
-        // Load user details from Firebase Realtime Database
+        profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecyclerView);
+        profilePostsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3)); // Grid layout (3 columns)
+        postList = new ArrayList<>();
+        postAdapter = new ProfilePostsAdapter(postList);
+        profilePostsRecyclerView.setAdapter(postAdapter);
+
+        // Load user details and posts
         loadUserDetails();
+        loadUserPosts();
 
-        // Sign out functionality
         signOutButton.setOnClickListener(v -> {
             mAuth.signOut();
             Intent intent = new Intent(getActivity(), SignInActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);  // Clear back stack
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            getActivity().finish();  // Close current activity
+            getActivity().finish();
         });
+
         editProfileButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditProfileActivity.class);
             startActivity(intent);
@@ -83,13 +101,12 @@ public class ProfileFragment extends Fragment {
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);
-                    // profileImage
                     userBio.setText(bio);
                     if (image != null && !image.isEmpty()) {
                         Picasso.get()
                                 .load(image)
-                                .placeholder(R.drawable.ic_profile_placeholder) // Use placeholder while loading
-                                .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
+                                .placeholder(R.drawable.ic_profile_placeholder)
+                                .error(R.drawable.ic_profile_placeholder)
                                 .into(profileImage);
                     }
                 }
@@ -97,7 +114,28 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error, e.g., show a Toast message
+                // Handle error
+            }
+        });
+    }
+
+    private void loadUserPosts() {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        postsRef.orderByChild("userId").equalTo(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                postList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post post = snapshot.getValue(Post.class);
+                    postList.add(post);
+                }
+                postAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
             }
         });
     }

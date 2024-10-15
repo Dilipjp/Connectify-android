@@ -27,6 +27,8 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage", v
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
+android-application = { id = "com.android.application", version = "8.5.0" }
+
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+
 

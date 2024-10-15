@@ -23,7 +23,7 @@
     <EditText
         android:id="@+id/postCaption"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="Write a caption..."
         android:layout_below="@id/selectImageButton"
         android:layout_marginBottom="16dp" />

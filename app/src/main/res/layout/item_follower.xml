@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:text="Follow"
         android:textColor="@android:color/white"
+        android:backgroundTint="@color/black"
         android:padding="8dp"
         android:layout_marginStart="8dp"
         android:drawablePadding="4dp" />
