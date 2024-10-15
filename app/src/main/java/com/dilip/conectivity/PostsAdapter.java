@@ -56,13 +56,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         } else {
             holder.locationLayout.setVisibility(View.GONE);
         }
-        if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
-            holder.locationTextView.setText(post.getLocationName());
-            holder.locationLayout.setVisibility(View.VISIBLE);
-        } else {
-            holder.locationLayout.setVisibility(View.GONE);
-        }
-       if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
+
+                    if (post.getLocationName() != null && !post.getLocationName().isEmpty()) {
                         holder.locationTextView.setText(post.getLocationName());
                         holder.locationLayout.setVisibility(View.VISIBLE);
                     } else {
