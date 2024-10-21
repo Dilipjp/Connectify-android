@@ -9,6 +9,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private final HomeFragment homeFragment = new HomeFragment();
+    private final FollowersFragment followersFragment = new FollowersFragment(); // Ensure FollowersFragment exists
+    private final PostFragment postFragment = new PostFragment();
+    private final ProfileFragment profileFragment = new ProfileFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +22,9 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
         // Set the default fragment
-        loadFragment(new HomeFragment());
+        if (savedInstanceState == null) {
+            loadFragment(homeFragment);
+        }
 
         // Handle navigation item selection
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -27,13 +33,13 @@ public class HomeActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
+                selectedFragment = homeFragment;
             } else if (itemId == R.id.nav_followers) {
-                selectedFragment = new FollowersFragment();
+                selectedFragment = followersFragment;
             } else if (itemId == R.id.nav_post) {
-                selectedFragment = new PostFragment();
+                selectedFragment = postFragment;
             } else if (itemId == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
+                selectedFragment = profileFragment;
             }
 
             return loadFragment(selectedFragment);

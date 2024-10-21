@@ -16,6 +16,12 @@
             android:name=".EditPostActivity"
             android:exported="false" />
         <activity
+            android:name=".CommentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FollowersActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserPostActivity"
             android:exported="false" />
         <activity

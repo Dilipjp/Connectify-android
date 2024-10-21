@@ -41,12 +41,16 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.google.firebase:firebase-bom:32.2.3")
+    implementation ("com.google.firebase:firebase-database")
+    implementation ("com.google.firebase:firebase-auth")
+    implementation ("com.google.firebase:firebase-storage")
     implementation ("com.google.android.libraries.places:places:2.6.0") // Add this line
-
 
 
 }
