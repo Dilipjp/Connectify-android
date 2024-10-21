@@ -136,3 +136,4 @@ public class FollowerAdapter extends RecyclerView.Adapter<FollowerAdapter.UserVi
         }
     }
 }
+

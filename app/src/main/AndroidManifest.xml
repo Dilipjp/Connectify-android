@@ -12,18 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Conectivity"
         tools:targetApi="31">
-
-        <activity
-            android:name=".Like"
-            android:exported="false" />
-        <activity
-            android:name=".UserPostActivity"
-            android:exported="false" />
         <activity
             android:name=".EditPostActivity"
             android:exported="false" />
         <activity
-            android:name=".Like"
+            android:name=".CommentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FollowersActivity"
             android:exported="false" />
         <activity
             android:name=".UserPostActivity"
