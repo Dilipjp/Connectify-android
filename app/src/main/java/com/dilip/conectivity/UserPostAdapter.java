@@ -44,7 +44,6 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostAdapter.UserPo
 
 
         holder.editButton.setOnClickListener(v -> {
-            // Navigate to EditPostActivity and pass the post details
             Intent intent = new Intent(holder.itemView.getContext(), EditPostActivity.class);
             intent.putExtra("POST_ID", post.getPostId());
             intent.putExtra("POST_CAPTION", post.getCaption());
@@ -56,11 +55,11 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostAdapter.UserPo
         holder.deleteButton.setOnClickListener(v -> {
             postsRef.child(post.getPostId()).removeValue((databaseError, databaseReference) -> {
                 if (databaseError == null) {
-                    Toast.makeText(holder.itemView.getContext(), "Post is deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(holder.itemView.getContext(), "Post deleted", Toast.LENGTH_SHORT).show();
                     postList.remove(position);
                     notifyItemRemoved(position);  // Remove item from RecyclerView
                 } else {
-                    Toast.makeText(holder.itemView.getContext(), "Failed to delete the post", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(holder.itemView.getContext(), "Failed to delete post", Toast.LENGTH_SHORT).show();
                 }
             });
         });

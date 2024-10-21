@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,19 +21,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProfileFragment extends Fragment {
 
-    private TextView userName, userEmail, userPhone, userBio, postsHeading;
+    private TextView userName, userEmail, userPhone, userBio, userPosts, userFollowers, userFollowing;
     private ImageView profileImage;
     private Button signOutButton, editProfileButton;
-    private RecyclerView profilePostsRecyclerView;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef, postsRef;
-    private ProfilePostsAdapter postAdapter; // Use new adapter
-    private List<Post> postList;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -47,40 +41,47 @@ public class ProfileFragment extends Fragment {
         // Initialize Firebase and UI elements
         mAuth = FirebaseAuth.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference("users");
-        postsRef = FirebaseDatabase.getInstance().getReference("posts");
+        postsRef = FirebaseDatabase.getInstance().getReference("posts");  // Reference to posts node
+
 
         userName = view.findViewById(R.id.userName);
         userEmail = view.findViewById(R.id.userEmail);
         userPhone = view.findViewById(R.id.userPhone);
         userBio = view.findViewById(R.id.userBio);
         profileImage = view.findViewById(R.id.profileImage);
+        userPosts = view.findViewById(R.id.userPosts);
+        userFollowers = view.findViewById(R.id.userFollowers);
+        userFollowing = view.findViewById(R.id.userFollowing);
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
-        postsHeading = view.findViewById(R.id.postsHeading); // Assuming this is the ID for your posts label
-        postsHeading.setText("Your Posts");
 
-        profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecyclerView);
-        profilePostsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3)); // Grid layout (3 columns)
-        postList = new ArrayList<>();
-        postAdapter = new ProfilePostsAdapter(postList);
-        profilePostsRecyclerView.setAdapter(postAdapter);
-
-        // Load user details and posts
+        // Load user details from Firebase Realtime Database
         loadUserDetails();
-        loadUserPosts();
+        // Load post count for the current user
+        loadPostCount();
+        // Load followers count for the current user
+        loadFollowerCount();
+        // Load followings count for the current user
+        loadFollowingsCount();
 
+        // Sign out functionality
         signOutButton.setOnClickListener(v -> {
             mAuth.signOut();
             Intent intent = new Intent(getActivity(), SignInActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);  // Clear back stack
             startActivity(intent);
-            getActivity().finish();
+            getActivity().finish();  // Close current activity
         });
-
         editProfileButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditProfileActivity.class);
             startActivity(intent);
         });
+        userPosts.setOnClickListener(view1 ->  {
+                Intent intent = new Intent(getActivity(), UserPostActivity.class);
+                startActivity(intent);
+        });
+
+
 
         return view;
     }
@@ -101,12 +102,13 @@ public class ProfileFragment extends Fragment {
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);
+                    // profileImage
                     userBio.setText(bio);
                     if (image != null && !image.isEmpty()) {
                         Picasso.get()
                                 .load(image)
-                                .placeholder(R.drawable.ic_profile_placeholder)
-                                .error(R.drawable.ic_profile_placeholder)
+                                .placeholder(R.drawable.ic_profile_placeholder) // Use placeholder while loading
+                                .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
                                 .into(profileImage);
                     }
                 }
@@ -114,29 +116,70 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                // Handle error, e.g., show a Toast message
+            }
+        });
+    }
+    private void loadPostCount()
+
+    {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        postsRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long postCount = dataSnapshot.getChildrenCount();
+                userPosts.setText(postCount + " Posts");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Failed to load posts.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void loadUserPosts() {
+    private void loadFollowerCount() {
         String userId = mAuth.getCurrentUser().getUid();
 
-        postsRef.orderByChild("userId").equalTo(userId).addValueEventListener(new ValueEventListener() {
+        usersRef.child(userId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Post post = snapshot.getValue(Post.class);
-                    postList.add(post);
-                }
-                postAdapter.notifyDataSetChanged();
+                long followerCount = dataSnapshot.getChildrenCount();
+                userFollowers.setText(followerCount + " Followers");
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                Toast.makeText(getContext(), "Failed to load followers.", Toast.LENGTH_SHORT).show();
             }
         });
     }
+    private void loadFollowingsCount() {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long followingCount = 0;
+
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    // Check if the current user is listed as a follower under other users
+                    if (userSnapshot.hasChild("followers") && userSnapshot.child("followers").hasChild(currentUserId)) {
+                        followingCount++;
+                    }
+                }
+
+                // Update the UI with the following count
+                userFollowing.setText(followingCount + " Following");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error, for example, by showing a Toast
+                Toast.makeText(getContext(), "Failed to load followings.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }

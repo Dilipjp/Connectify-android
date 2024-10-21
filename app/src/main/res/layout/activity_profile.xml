@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="30dp"
-            android:text="12 Posts"
+            android:text="0 Posts"
             android:textSize="16sp" />
 
         <TextView
@@ -93,12 +93,13 @@
     <!-- Follow Button -->
     <Button
         android:id="@+id/followButton"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Follow"
         android:layout_marginTop="20dp"
         android:textColor="@android:color/white"
-        android:backgroundTint="@color/purple" />
+        android:backgroundTint="@color/black" />
 
 
 
