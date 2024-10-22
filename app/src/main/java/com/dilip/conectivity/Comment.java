@@ -6,6 +6,7 @@ public class Comment {
     private String userName;
     private String userProfileImage; // New field for user profile image
     private long timestamp;
+    private String commentId;
 
     public Comment() {
         // Default constructor required for calls to DataSnapshot.getValue(Comment.class)
@@ -59,5 +60,12 @@ public class Comment {
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
     }
-}
 
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+}
