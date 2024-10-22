@@ -25,7 +25,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView userName, userEmail, userPhone, userBio, userPosts, userFollowers, userFollowing;
     private ImageView profileImage;
-    private Button signOutButton, editProfileButton;
+    private Button signOutButton, editProfileButton, usersButton, postButton;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef, postsRef;
 
@@ -54,7 +54,7 @@ public class ProfileFragment extends Fragment {
         userFollowing = view.findViewById(R.id.userFollowing);
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
-
+        postButton = view.findViewById(R.id.postButton);
         // Load user details from Firebase Realtime Database
         loadUserDetails();
         // Load post count for the current user
@@ -98,7 +98,7 @@ public class ProfileFragment extends Fragment {
                     String phone = dataSnapshot.child("phone").getValue(String.class);
                     String image = dataSnapshot.child("userProfileImage").getValue(String.class);
                     String bio = dataSnapshot.child("userBio").getValue(String.class);
-
+                    String role = dataSnapshot.child("userRole").getValue(String.class);
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);
@@ -110,6 +110,16 @@ public class ProfileFragment extends Fragment {
                                 .placeholder(R.drawable.ic_profile_placeholder) // Use placeholder while loading
                                 .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
                                 .into(profileImage);
+                    }
+
+                    if (role != null) {
+                        // Check if the user is an moderator
+                        if (role.equals("Moderator")) {
+                            // Add moderator-specific Buttons
+                            postButton.setVisibility(View.VISIBLE);
+                        }else {
+                            postButton.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
