@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment {
         userFollowing = view.findViewById(R.id.userFollowing);
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
+        usersButton = view.findViewById(R.id.usersButton);
         postButton = view.findViewById(R.id.postButton);
         // Load user details from Firebase Realtime Database
         loadUserDetails();
@@ -112,13 +113,17 @@ public class ProfileFragment extends Fragment {
                                 .into(profileImage);
                     }
 
-                    if (role != null) {
-                        // Check if the user is an moderator
-                        if (role.equals("Moderator")) {
-                            // Add moderator-specific Buttons
+                    if (email != null && role != null) {
+                        // Check if the user is an admin
+                        if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+                            // Add admin-specific Buttons
+                            usersButton.setVisibility(View.VISIBLE);
                             postButton.setVisibility(View.VISIBLE);
+                        }else if(role.equals("Moderator")) {
+                            usersButton.setVisibility(View.GONE);
                         }else {
                             postButton.setVisibility(View.GONE);
+                            usersButton.setVisibility(View.GONE);
                         }
                     }
                 }
