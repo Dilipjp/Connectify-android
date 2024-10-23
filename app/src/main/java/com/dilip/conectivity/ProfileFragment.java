@@ -100,6 +100,7 @@ public class ProfileFragment extends Fragment {
                     String image = dataSnapshot.child("userProfileImage").getValue(String.class);
                     String bio = dataSnapshot.child("userBio").getValue(String.class);
                     String role = dataSnapshot.child("userRole").getValue(String.class);
+
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);

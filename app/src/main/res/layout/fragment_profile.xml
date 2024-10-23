@@ -101,7 +101,6 @@
         android:layout_marginTop="20dp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/black" />
-
     <!-- All Users Button -->
     <Button
         android:id="@+id/usersButton"
@@ -112,7 +111,6 @@
         android:textColor="@android:color/white"
         android:visibility="gone"
         android:backgroundTint="@color/black" />
-
     <!-- All Posts Button -->
     <Button
         android:id="@+id/postButton"
@@ -123,7 +121,6 @@
         android:textColor="@android:color/white"
         android:visibility="gone"
         android:backgroundTint="@color/black" />
-
     <!-- Sign Out Button -->
     <Button
         android:id="@+id/signOutButton"
