@@ -99,7 +99,26 @@
         android:layout_marginTop="20dp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/black" />
-
+    <!-- All Users Button -->
+    <Button
+        android:id="@+id/usersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Users"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:backgroundTint="@color/black" />
+    <!-- All Posts Button -->
+    <Button
+        android:id="@+id/postButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Posts"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:backgroundTint="@color/black" />
     <!-- Sign Out Button -->
     <Button
         android:id="@+id/signOutButton"

@@ -25,7 +25,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView userName, userEmail, userPhone, userBio, userPosts, userFollowers, userFollowing;
     private ImageView profileImage;
-    private Button signOutButton, editProfileButton;
+    private Button signOutButton, editProfileButton, usersButton, postButton;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef, postsRef;
 
@@ -54,6 +54,8 @@ public class ProfileFragment extends Fragment {
         userFollowing = view.findViewById(R.id.userFollowing);
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
+        usersButton = view.findViewById(R.id.usersButton);
+        postButton = view.findViewById(R.id.postButton);
 
         // Load user details from Firebase Realtime Database
         loadUserDetails();
@@ -98,6 +100,7 @@ public class ProfileFragment extends Fragment {
                     String phone = dataSnapshot.child("phone").getValue(String.class);
                     String image = dataSnapshot.child("userProfileImage").getValue(String.class);
                     String bio = dataSnapshot.child("userBio").getValue(String.class);
+                    String role = dataSnapshot.child("userRole").getValue(String.class);
 
                     userName.setText(name);
                     userEmail.setText(email);
@@ -111,6 +114,29 @@ public class ProfileFragment extends Fragment {
                                 .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
                                 .into(profileImage);
                     }
+                    if (role != null) {
+                        // Check if the user is an moderator
+                        if (role.equals("Moderator")) {
+                            // Add moderator-specific Buttons
+                            postButton.setVisibility(View.VISIBLE);
+                        }else {
+                            postButton.setVisibility(View.GONE);
+                        }
+                    }
+
+//                        if (email != null && role != null) {
+//                            // Check if the user is an admin
+//                            if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+//                                // Add admin-specific Buttons
+//                                usersButton.setVisibility(View.VISIBLE);
+//                                postButton.setVisibility(View.VISIBLE);
+//                                 }else if(role.equals("Moderator")) {
+//                                usersButton.setVisibility(View.GONE);
+//                            }else {
+//                                postButton.setVisibility(View.GONE);
+//                                usersButton.setVisibility(View.GONE);
+//                            }
+//                        }
                 }
             }
 
