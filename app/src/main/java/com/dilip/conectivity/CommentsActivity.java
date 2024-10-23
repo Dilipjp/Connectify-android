@@ -54,7 +54,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         // Initialize RecyclerView
         commentList = new ArrayList<>();
-        commentsAdapter = new CommentsAdapter(commentList);
+        commentsAdapter = new CommentsAdapter(commentList, postId);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentsRecyclerView.setAdapter(commentsAdapter);
 
@@ -79,6 +79,8 @@ public class CommentsActivity extends AppCompatActivity {
                 for (DataSnapshot commentSnapshot : dataSnapshot.getChildren()) {
                     Comment comment = commentSnapshot.getValue(Comment.class);
                     if (comment != null) {
+                        String commentId = commentSnapshot.getKey();
+                        comment.setCommentId(commentId);
                         // Fetch user details from the users node
                         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(comment.getUserId());
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
