@@ -56,7 +56,6 @@ public class ProfileFragment extends Fragment {
         editProfileButton = view.findViewById(R.id.editProfileButton);
         usersButton = view.findViewById(R.id.usersButton);
         postButton = view.findViewById(R.id.postButton);
-
         // Load user details from Firebase Realtime Database
         loadUserDetails();
         // Load post count for the current user
@@ -114,29 +113,20 @@ public class ProfileFragment extends Fragment {
                                 .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
                                 .into(profileImage);
                     }
-                    if (role != null) {
-                        // Check if the user is an moderator
-                        if (role.equals("Moderator")) {
-                            // Add moderator-specific Buttons
+
+                    if (email != null && role != null) {
+                        // Check if the user is an admin
+                        if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+                            // Add admin-specific Buttons
+                            usersButton.setVisibility(View.VISIBLE);
                             postButton.setVisibility(View.VISIBLE);
+                        }else if(role.equals("Moderator")) {
+                            usersButton.setVisibility(View.GONE);
                         }else {
                             postButton.setVisibility(View.GONE);
+                            usersButton.setVisibility(View.GONE);
                         }
                     }
-
-//                        if (email != null && role != null) {
-//                            // Check if the user is an admin
-//                            if (email.equals("admin@gmail.com") && role.equals("Admin")) {
-//                                // Add admin-specific Buttons
-//                                usersButton.setVisibility(View.VISIBLE);
-//                                postButton.setVisibility(View.VISIBLE);
-//                                 }else if(role.equals("Moderator")) {
-//                                usersButton.setVisibility(View.GONE);
-//                            }else {
-//                                postButton.setVisibility(View.GONE);
-//                                usersButton.setVisibility(View.GONE);
-//                            }
-//                        }
                 }
             }
 
