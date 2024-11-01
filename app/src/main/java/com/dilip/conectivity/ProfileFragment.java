@@ -82,6 +82,13 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), UserPostActivity.class);
                 startActivity(intent);
         });
+        postButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AllPostsActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -114,29 +121,22 @@ public class ProfileFragment extends Fragment {
                                 .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
                                 .into(profileImage);
                     }
-                    if (role != null) {
-                        // Check if the user is an moderator
-                        if (role.equals("Moderator")) {
-                            // Add moderator-specific Buttons
-                            postButton.setVisibility(View.VISIBLE);
-                        }else {
-                            postButton.setVisibility(View.GONE);
-                        }
-                    }
 
-//                        if (email != null && role != null) {
-//                            // Check if the user is an admin
-//                            if (email.equals("admin@gmail.com") && role.equals("Admin")) {
-//                                // Add admin-specific Buttons
-//                                usersButton.setVisibility(View.VISIBLE);
-//                                postButton.setVisibility(View.VISIBLE);
-//                                 }else if(role.equals("Moderator")) {
-//                                usersButton.setVisibility(View.GONE);
-//                            }else {
-//                                postButton.setVisibility(View.GONE);
-//                                usersButton.setVisibility(View.GONE);
-//                            }
-//                        }
+
+                        if (email != null && role != null) {
+                            // Check if the user is an admin
+                            if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+                                // Add admin-specific Buttons
+                                usersButton.setVisibility(View.VISIBLE);
+                                postButton.setVisibility(View.VISIBLE);
+                            }else if(role.equals("User")) {
+                                usersButton.setVisibility(View.GONE);
+                                postButton.setVisibility(View.VISIBLE);
+                            }else {
+                                postButton.setVisibility(View.GONE);
+                                usersButton.setVisibility(View.GONE);
+                            }
+                        }
                 }
             }
 
