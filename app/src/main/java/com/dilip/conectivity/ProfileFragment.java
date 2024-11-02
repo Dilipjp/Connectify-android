@@ -57,7 +57,6 @@ public class ProfileFragment extends Fragment {
         editProfileButton = view.findViewById(R.id.editProfileButton);
         usersButton = view.findViewById(R.id.usersButton);
         postButton = view.findViewById(R.id.postButton);
-
         // Load user details from Firebase Realtime Database
         loadUserDetails();
         // Load post count for the current user
@@ -208,6 +207,7 @@ private void loadUserWarnings() {
                     }
 
 
+
                         if (email != null && role != null) {
                             // Check if the user is an admin
                             if (email.equals("admin@gmail.com") && role.equals("Admin")) {
@@ -222,6 +222,7 @@ private void loadUserWarnings() {
                                 usersButton.setVisibility(View.GONE);
                             }
                         }
+
                 }
             }
 

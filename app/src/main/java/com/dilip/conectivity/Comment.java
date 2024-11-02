@@ -69,4 +69,3 @@ public class Comment {
         this.commentId = commentId;
     }
 }
-
