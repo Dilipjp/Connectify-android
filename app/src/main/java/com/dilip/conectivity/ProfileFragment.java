@@ -57,6 +57,7 @@ public class ProfileFragment extends Fragment {
         editProfileButton = view.findViewById(R.id.editProfileButton);
         usersButton = view.findViewById(R.id.usersButton);
         postButton = view.findViewById(R.id.postButton);
+
         // Load user details from Firebase Realtime Database
         loadUserDetails();
         // Load post count for the current user
@@ -65,8 +66,6 @@ public class ProfileFragment extends Fragment {
         loadFollowerCount();
         // Load followings count for the current user
         loadFollowingsCount();
-        // Load warning messages
-        loadUserWarnings();
 
         // Sign out functionality
         signOutButton.setOnClickListener(v -> {
@@ -81,8 +80,8 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
         usersButton.setOnClickListener(view1 ->  {
-                Intent intent = new Intent(getActivity(), ModeratorUsersActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(getActivity(), ModeratorUsersActivity.class);
+            startActivity(intent);
         });
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,86 +96,7 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-//    private void loadUserWarnings() {
-//        String userId = mAuth.getCurrentUser().getUid();
-//
-//        usersRef.child(userId).child("userWarnings").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    StringBuilder warningsBuilder = new StringBuilder();
-//                    for (DataSnapshot warningSnapshot : dataSnapshot.getChildren()) {
-//                        String message = warningSnapshot.child("message").getValue(String.class);
-//                        String postId = warningSnapshot.child("postId").getValue(String.class);
-//
-//                        warningsBuilder.append("• ").append(message+postId).append("\n");
-//                    }
-//                    userWarnings.setText(warningsBuilder.toString().trim());
-//                    userWarnings.setVisibility(View.VISIBLE);  // Make warnings visible if they exist
-//                } else {
-//                    userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-private void loadUserWarnings() {
-    String userId = mAuth.getCurrentUser().getUid();
 
-    usersRef.child(userId).child("userWarnings").addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                StringBuilder warningsBuilder = new StringBuilder();
-                int totalWarnings = (int) dataSnapshot.getChildrenCount();
-                int[] completedWarnings = {0};  // To track completed caption fetches
-
-                for (DataSnapshot warningSnapshot : dataSnapshot.getChildren()) {
-                    String message = warningSnapshot.child("message").getValue(String.class);
-                    String postId = warningSnapshot.child("postId").getValue(String.class);
-
-                    // Fetch caption from posts node using postId
-                    postsRef.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-                            String caption = postSnapshot.child("caption").getValue(String.class);
-
-                            // Append message and caption to the warningsBuilder
-                            warningsBuilder.append("• ").append(message)
-                                    .append("\n  Caption: ").append(caption != null ? caption : "No caption available")
-                                    .append("\n\n");
-
-                            // Increment completed warnings count
-                            completedWarnings[0]++;
-
-                            // If all warnings have been processed, update the TextView
-                            if (completedWarnings[0] == totalWarnings) {
-                                userWarnings.setText(warningsBuilder.toString().trim());
-                                userWarnings.setVisibility(View.VISIBLE);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getContext(), "Failed to load caption.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            } else {
-                userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-            Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
-        }
-    });
-}
 
 
     private void loadUserDetails() {
@@ -207,22 +127,20 @@ private void loadUserWarnings() {
                     }
 
 
-
-                        if (email != null && role != null) {
-                            // Check if the user is an admin
-                            if (email.equals("admin@gmail.com") && role.equals("Admin")) {
-                                // Add admin-specific Buttons
-                                usersButton.setVisibility(View.VISIBLE);
-                                postButton.setVisibility(View.VISIBLE);
-                            }else if(role.equals("Moderator")) {
-                                usersButton.setVisibility(View.VISIBLE);
+                    if (email != null && role != null) {
+                        // Check if the user is an admin
+                        if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+                            // Add admin-specific Buttons
+                            usersButton.setVisibility(View.VISIBLE);
+                            postButton.setVisibility(View.VISIBLE);
+                        }else if(role.equals("Moderator")) {
+                            usersButton.setVisibility(View.VISIBLE);
 //                                postButton.setVisibility(View.VISIBLE);
-                            }else {
-                                postButton.setVisibility(View.GONE);
-                                usersButton.setVisibility(View.GONE);
-                            }
+                        }else {
+                            postButton.setVisibility(View.GONE);
+                            usersButton.setVisibility(View.GONE);
                         }
-
+                    }
                 }
             }
 
