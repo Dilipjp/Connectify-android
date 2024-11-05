@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -60,6 +58,16 @@
         android:textSize="16sp"
         android:layout_marginTop="5dp" />
 
+    <!-- Inside fragment_profile.xml -->
+    <TextView
+        android:id="@+id/userWarnings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone"
+        android:paddingTop="8dp"/>
+
+
     <!-- Stats Container -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -101,26 +109,36 @@
         android:layout_marginTop="20dp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/black" />
-    <!-- All Users Button -->
+    <!-- All Users Button for admin-->
+    <Button
+        android:id="@+id/adminUsersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All Users"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:backgroundTint="@color/black" />
+    <!-- All Users Button for moderator-->
     <Button
         android:id="@+id/usersButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Users"
+        android:text="All Users"
         android:layout_marginTop="10dp"
         android:textColor="@android:color/white"
         android:visibility="gone"
         android:backgroundTint="@color/black" />
     <!-- All Posts Button -->
-    <Button
-        android:id="@+id/postButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Posts"
-        android:layout_marginTop="10dp"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        android:backgroundTint="@color/black" />
+    <!--    <Button-->
+    <!--        android:id="@+id/postButton"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="Posts"-->
+    <!--        android:layout_marginTop="10dp"-->
+    <!--        android:textColor="@android:color/white"-->
+    <!--        android:visibility="gone"-->
+    <!--        android:backgroundTint="@color/black" />-->
     <!-- Sign Out Button -->
     <Button
         android:id="@+id/signOutButton"
@@ -130,27 +148,5 @@
         android:layout_marginTop="10dp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/black" />
-
-    <!-- "Your Posts" Label -->
-    <TextView
-        android:id="@+id/postsHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your Posts"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="start"
-        android:textStyle="bold"
-        android:textColor="@color/black" />
-
-    <!-- User Posts RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/profilePostsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="10dp"
-        android:scrollbars="vertical" />
 
 </LinearLayout>
