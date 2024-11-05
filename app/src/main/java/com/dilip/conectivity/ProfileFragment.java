@@ -24,7 +24,7 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView userName, userEmail, userPhone, userBio, userPosts, userFollowers, userFollowing, userWarnings;
+    private TextView userName, userEmail, userPhone, userBio, userStatus, userPosts, userFollowers, userFollowing, userWarnings;
     private ImageView profileImage;
     private Button signOutButton, editProfileButton, usersButton, adminUsersButton, postButton;
     private FirebaseAuth mAuth;
@@ -50,6 +50,7 @@ public class ProfileFragment extends Fragment {
         userEmail = view.findViewById(R.id.userEmail);
         userPhone = view.findViewById(R.id.userPhone);
         userBio = view.findViewById(R.id.userBio);
+        userStatus = view.findViewById(R.id.userStatus);
         userWarnings = view.findViewById(R.id.userWarnings);
         profileImage = view.findViewById(R.id.profileImage);
         userPosts = view.findViewById(R.id.userPosts);
@@ -151,12 +152,15 @@ public class ProfileFragment extends Fragment {
                     userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
     private void loadUserDetails() {
         String userId = mAuth.getCurrentUser().getUid();
 
@@ -170,10 +174,15 @@ public class ProfileFragment extends Fragment {
                     String image = dataSnapshot.child("userProfileImage").getValue(String.class);
                     String bio = dataSnapshot.child("userBio").getValue(String.class);
                     String role = dataSnapshot.child("userRole").getValue(String.class);
+                    String status = dataSnapshot.child("userStatus").getValue(String.class);
 
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);
+//                    userStatus.setText("Account status: "+ status);
+                    if(role.equals("User") && status.equals("deactivated")){
+                        userStatus.setText("Your account is currently " + status + ". Please contact the Connectify Support Center for assistance at support@connectify.com.");
+                    }
                     // profileImage
                     userBio.setText(bio);
                     if (image != null && !image.isEmpty()) {
@@ -195,7 +204,7 @@ public class ProfileFragment extends Fragment {
                             usersButton.setVisibility(View.VISIBLE);
 //                                postButton.setVisibility(View.VISIBLE);
                         }else {
-                            postButton.setVisibility(View.GONE);
+//                                postButton.setVisibility(View.GONE);
                             usersButton.setVisibility(View.GONE);
                         }
                     }
