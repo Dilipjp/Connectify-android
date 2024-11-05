@@ -26,7 +26,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView userName, userEmail, userPhone, userBio, userStatus, userPosts, userFollowers, userFollowing, userWarnings;
     private ImageView profileImage;
-    private Button signOutButton, editProfileButton, usersButton, adminUsersButton, postButton;
+    private Button signOutButton, editProfileButton, usersButton, adminUsersButton, reportsButton;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef, postsRef;
 
@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
         editProfileButton = view.findViewById(R.id.editProfileButton);
         usersButton = view.findViewById(R.id.usersButton);
         adminUsersButton = view.findViewById(R.id.adminUsersButton);
-//        postButton = view.findViewById(R.id.postButton);
+        reportsButton = view.findViewById(R.id.reportsButton);
 
         // Load user details from Firebase Realtime Database
         loadUserDetails();
@@ -91,6 +91,10 @@ public class ProfileFragment extends Fragment {
         });
         adminUsersButton.setOnClickListener(view1 ->  {
             Intent intent = new Intent(getActivity(), AdminUsersActivity.class);
+            startActivity(intent);
+        });
+        reportsButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), ReportsActivity.class);
             startActivity(intent);
         });
         userPosts.setOnClickListener(new View.OnClickListener() {
@@ -195,16 +199,16 @@ public class ProfileFragment extends Fragment {
 
 
                     if (email != null && role != null) {
-                        // Check if the user is an admin
+                        // Check if the user is an admin or moderator
                         if (email.equals("admin@gmail.com") && role.equals("Admin")) {
                             // Add admin-specific Buttons
                             adminUsersButton.setVisibility(View.VISIBLE);
-//                                postButton.setVisibility(View.VISIBLE);
+                            reportsButton.setVisibility(View.VISIBLE);
                         }else if(role.equals("Moderator")) {
+                            // Add moderator-specific Buttons
                             usersButton.setVisibility(View.VISIBLE);
-//                                postButton.setVisibility(View.VISIBLE);
+                            reportsButton.setVisibility(View.VISIBLE);
                         }else {
-//                                postButton.setVisibility(View.GONE);
                             usersButton.setVisibility(View.GONE);
                         }
                     }
