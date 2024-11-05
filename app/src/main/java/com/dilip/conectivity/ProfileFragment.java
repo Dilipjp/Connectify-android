@@ -157,3 +157,54 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+    private void loadUserDetails() {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        usersRef.child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String name = dataSnapshot.child("userName").getValue(String.class);
+                    String email = dataSnapshot.child("userEmail").getValue(String.class);
+                    String phone = dataSnapshot.child("phone").getValue(String.class);
+                    String image = dataSnapshot.child("userProfileImage").getValue(String.class);
+                    String bio = dataSnapshot.child("userBio").getValue(String.class);
+                    String role = dataSnapshot.child("userRole").getValue(String.class);
+
+                    userName.setText(name);
+                    userEmail.setText(email);
+                    userPhone.setText(phone);
+                    // profileImage
+                    userBio.setText(bio);
+                    if (image != null && !image.isEmpty()) {
+                        Picasso.get()
+                                .load(image)
+                                .placeholder(R.drawable.ic_profile_placeholder) // Use placeholder while loading
+                                .error(R.drawable.ic_profile_placeholder) // Fallback in case of an error
+                                .into(profileImage);
+                    }
+
+
+                    if (email != null && role != null) {
+                        // Check if the user is an admin
+                        if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+                            // Add admin-specific Buttons
+                            adminUsersButton.setVisibility(View.VISIBLE);
+//                                postButton.setVisibility(View.VISIBLE);
+                        }else if(role.equals("Moderator")) {
+                            usersButton.setVisibility(View.VISIBLE);
+//                                postButton.setVisibility(View.VISIBLE);
+                        }else {
+                            postButton.setVisibility(View.GONE);
+                            usersButton.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error, e.g., show a Toast message
+            }
+        });
+    }
