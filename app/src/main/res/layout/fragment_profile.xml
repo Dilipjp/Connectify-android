@@ -57,6 +57,16 @@
         android:text="+1234567890"
         android:textSize="16sp"
         android:layout_marginTop="5dp" />
+    <!-- User Status -->
+    <TextView
+        android:id="@+id/userStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_marginTop="5dp" />
 
     <!-- Inside fragment_profile.xml -->
     <TextView
