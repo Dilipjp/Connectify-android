@@ -1,0 +1,17 @@
+<!-- res/drawable/ic_report_alternative.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Triangle with exclamation mark in the center for a report icon -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M12,2L2,22h20L12,2z"/>
+
+    <!-- Exclamation mark inside the triangle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,16a1,1 0 0,1 -1,-1v-4a1,1 0 0,1 2,0v4a1,1 0 0,1 -1,1zM12,18a1.5,1.5 0 1,1 0,3 1.5,1.5 0 1,1 0,-3z"/>
+</vector>
