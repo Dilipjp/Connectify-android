@@ -208,3 +208,66 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+    private void loadPostCount()
+
+    {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        postsRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long postCount = dataSnapshot.getChildrenCount();
+                userPosts.setText(postCount + " Posts");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Failed to load posts.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loadFollowerCount() {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        usersRef.child(userId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long followerCount = dataSnapshot.getChildrenCount();
+                userFollowers.setText(followerCount + " Followers");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Failed to load followers.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void loadFollowingsCount() {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long followingCount = 0;
+
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    // Check if the current user is listed as a follower under other users
+                    if (userSnapshot.hasChild("followers") && userSnapshot.child("followers").hasChild(currentUserId)) {
+                        followingCount++;
+                    }
+                }
+
+                // Update the UI with the following count
+                userFollowing.setText(followingCount + " Following");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error, for example, by showing a Toast
+                Toast.makeText(getContext(), "Failed to load followings.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+}
