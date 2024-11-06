@@ -24,7 +24,7 @@
         android:layout_below="@id/appLogo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:textColor="@color/purple" />
+        android:textColor="@color/black" />
 
     <!-- User Name Field -->
     <EditText
@@ -161,7 +161,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/errorTextView"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/purple"
+        android:backgroundTint="@color/black"
         android:textColor="@android:color/white"
         android:padding="12dp"
         android:minHeight="48dp" />
@@ -171,7 +171,7 @@
     <TextView
         android:id="@+id/signInTextView"
         android:text="Already have an account? Sign In"
-        android:textColor="@color/purple"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/signUpButton"

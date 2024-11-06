@@ -97,6 +97,16 @@ public class ProfileFragment extends Fragment {
             Intent intent = new Intent(getActivity(), ReportsActivity.class);
             startActivity(intent);
         });
+
+        adminUsersButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), AdminUsersActivity.class);
+            startActivity(intent);
+        });
+        reportsButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), ReportsActivity.class);
+            startActivity(intent);
+        });
+
         userPosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,40 +120,42 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    private void loadUserWarnings() {
-        String userId = mAuth.getCurrentUser().getUid();
 
-        usersRef.child(userId).child("userWarnings").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    StringBuilder warningsBuilder = new StringBuilder();
-                    int totalWarnings = (int) dataSnapshot.getChildrenCount();
-                    int[] completedWarnings = {0};  // To track completed caption fetches
+private void loadUserWarnings() {
+    String userId = mAuth.getCurrentUser().getUid();
 
-                    for (DataSnapshot warningSnapshot : dataSnapshot.getChildren()) {
-                        String message = warningSnapshot.child("message").getValue(String.class);
-                        String postId = warningSnapshot.child("postId").getValue(String.class);
+    usersRef.child(userId).child("userWarnings").addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.exists()) {
+                StringBuilder warningsBuilder = new StringBuilder();
+                int totalWarnings = (int) dataSnapshot.getChildrenCount();
+                int[] completedWarnings = {0};  // To track completed caption fetches
 
-                        // Fetch caption from posts node using postId
-                        postsRef.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-                                String caption = postSnapshot.child("caption").getValue(String.class);
+                for (DataSnapshot warningSnapshot : dataSnapshot.getChildren()) {
+                    String message = warningSnapshot.child("message").getValue(String.class);
+                    String postId = warningSnapshot.child("postId").getValue(String.class);
 
-                                // Append message and caption to the warningsBuilder
-                                warningsBuilder.append("• ").append(message)
-                                        .append("\n  Caption: ").append(caption != null ? caption : "No caption available")
-                                        .append("\n\n");
+                    // Fetch caption from posts node using postId
+                    postsRef.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                            String caption = postSnapshot.child("caption").getValue(String.class);
 
-                                // Increment completed warnings count
-                                completedWarnings[0]++;
+                            // Append message and caption to the warningsBuilder
+                            warningsBuilder.append("• ").append(message)
+                                    .append("\n  Caption: ").append(caption != null ? caption : "No caption available")
+                                    .append("\n\n");
 
-                                // If all warnings have been processed, update the TextView
-                                if (completedWarnings[0] == totalWarnings) {
-                                    userWarnings.setText(warningsBuilder.toString().trim());
-                                    userWarnings.setVisibility(View.VISIBLE);
-                                }
+                            // Increment completed warnings count
+                            completedWarnings[0]++;
+
+                            // If all warnings have been processed, update the TextView
+                            if (completedWarnings[0] == totalWarnings) {
+                                userWarnings.setText(warningsBuilder.toString().trim());
+                                userWarnings.setVisibility(View.VISIBLE);
+
+    
                             }
 
                             @Override
@@ -198,18 +210,22 @@ public class ProfileFragment extends Fragment {
                     }
 
 
-                    if (email != null && role != null) {
-                        // Check if the user is an admin or moderator
-                        if (email.equals("admin@gmail.com") && role.equals("Admin")) {
-                            // Add admin-specific Buttons
-                            adminUsersButton.setVisibility(View.VISIBLE);
-                            reportsButton.setVisibility(View.VISIBLE);
-                        }else if(role.equals("Moderator")) {
-                            // Add moderator-specific Buttons
-                            usersButton.setVisibility(View.VISIBLE);
-                            reportsButton.setVisibility(View.VISIBLE);
-                        }else {
-                            usersButton.setVisibility(View.GONE);
+
+                        if (email != null && role != null) {
+                            // Check if the user is an admin or moderator
+                            if (role.equals("Admin")) {
+                                // Add admin-specific Buttons
+                                adminUsersButton.setVisibility(View.VISIBLE);
+                                reportsButton.setVisibility(View.VISIBLE);
+                            }else if(role.equals("Moderator")) {
+                                // Add moderator-specific Buttons
+                                usersButton.setVisibility(View.VISIBLE);
+                                reportsButton.setVisibility(View.VISIBLE);
+                            }else {
+                                usersButton.setVisibility(View.GONE);
+                            }
+
+                   
                         }
                     }
                 }

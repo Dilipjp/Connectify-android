@@ -62,7 +62,7 @@ public class FollowersFragment extends Fragment {
     }
 
     private void loadUsers() {
-        usersRef.addValueEventListener(new ValueEventListener() {
+        usersRef.orderByChild("userRole").equalTo("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear(); // Clear the list before adding

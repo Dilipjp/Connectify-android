@@ -1,6 +1,8 @@
 package com.dilip.conectivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -94,6 +96,38 @@ public class AdminUsersActivity extends AppCompatActivity {
             holder.userStatusTextView.setText(user.getUserStatus());
             Picasso.get().load(user.getUserProfileImage()).into(holder.userProfileImageView);
 
+
+            // Update button text based on the current user status
+            String currentStatus = user.getUserStatus();
+            holder.actionButton.setText(currentStatus.equals("active") ? "Deactivate" : "Activate");
+
+            holder.actionButton.setOnClickListener(v -> {
+                // Toggle the user status between "active" and "inactive"
+                String newStatus = user.getUserStatus().equals("active") ? "deactivated" : "active";
+
+                // Show confirmation dialog
+                new AlertDialog.Builder(holder.itemView.getContext())
+                        .setTitle("Confirm Status Change")
+                        .setMessage("Are you sure you want to " + (newStatus.equals("active") ? "activate" : "deactivate") + " this user?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            // Update the userStatus field in Firebase
+                            usersRef.child(user.getUserId()).child("userStatus").setValue(newStatus)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Update status in the local list and UI
+                                        user.setUserStatus(newStatus);
+                                        holder.userStatusTextView.setText(newStatus);
+                                        holder.actionButton.setText(newStatus.equals("active") ? "Deactivate" : "Activate");
+                                        loadUsers();
+                                        Toast.makeText(AdminUsersActivity.this, "User status updated to " + newStatus, Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> Toast.makeText(AdminUsersActivity.this, "Failed to update user status.", Toast.LENGTH_SHORT).show());
+                        })
+                        .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                        .show();
+            });
+
+
+
             holder.viewPostsButton.setOnClickListener(v -> {
                 // Redirect to ModeratorUserPostActivity with userId
                 Intent intent = new Intent(AdminUsersActivity.this, ModeratorUserPostsActivity.class);
@@ -110,7 +144,8 @@ public class AdminUsersActivity extends AppCompatActivity {
         class UserViewHolder extends RecyclerView.ViewHolder {
             ImageView userProfileImageView;
             TextView userNameTextView, userStatusTextView;
-            Button viewPostsButton;
+            Button viewPostsButton, actionButton;
+
 
             public UserViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -118,7 +153,10 @@ public class AdminUsersActivity extends AppCompatActivity {
                 userNameTextView = itemView.findViewById(R.id.userNameTextView);
                 userStatusTextView = itemView.findViewById(R.id.userStatusTextView);
                 viewPostsButton = itemView.findViewById(R.id.viewPostsButton);
+
+                actionButton = itemView.findViewById(R.id.actionButton);
             }
         }
     }
 }
+

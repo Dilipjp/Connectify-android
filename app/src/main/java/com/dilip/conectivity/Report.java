@@ -32,4 +32,7 @@ public class Report {
     public String getUserId() {
         return userId;
     }
+
 }
+
+

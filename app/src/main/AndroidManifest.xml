@@ -19,6 +19,13 @@
             android:name=".AdminUsersActivity"
             android:exported="false" />
         <activity
+            android:name=".ModeratorUserPostsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ModeratorUsersActivity"
+            android:exported="false" />
+        <activity
+
             android:name=".AllPostsActivity"
             android:exported="false" />
         <activity

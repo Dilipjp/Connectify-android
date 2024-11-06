@@ -75,7 +75,8 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/holo_red_dark"
         android:visibility="gone"
-        android:paddingTop="8dp"/>
+    android:paddingTop="8dp"/>
+
 
 
     <!-- Stats Container -->
@@ -144,7 +145,7 @@
         android:id="@+id/reportsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reports"
+        android:text="All Reports"
         android:layout_marginTop="10dp"
         android:textColor="@android:color/white"
         android:visibility="gone"
