@@ -86,8 +86,8 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
         usersButton.setOnClickListener(view1 ->  {
-                Intent intent = new Intent(getActivity(), ModeratorUsersActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(getActivity(), ModeratorUsersActivity.class);
+            startActivity(intent);
         });
         adminUsersButton.setOnClickListener(view1 ->  {
             Intent intent = new Intent(getActivity(), AdminUsersActivity.class);
@@ -97,6 +97,16 @@ public class ProfileFragment extends Fragment {
             Intent intent = new Intent(getActivity(), ReportsActivity.class);
             startActivity(intent);
         });
+
+        adminUsersButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), AdminUsersActivity.class);
+            startActivity(intent);
+        });
+        reportsButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), ReportsActivity.class);
+            startActivity(intent);
+        });
+
         userPosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,6 +119,7 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
+
 
 private void loadUserWarnings() {
     String userId = mAuth.getCurrentUser().getUid();
@@ -143,26 +154,27 @@ private void loadUserWarnings() {
                             if (completedWarnings[0] == totalWarnings) {
                                 userWarnings.setText(warningsBuilder.toString().trim());
                                 userWarnings.setVisibility(View.VISIBLE);
+
+    
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getContext(), "Failed to load caption.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Toast.makeText(getContext(), "Failed to load caption.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } else {
+                    userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
                 }
-            } else {
-                userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
             }
-        }
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-            Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
-        }
-    });
-}
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     private void loadUserDetails() {
@@ -198,6 +210,7 @@ private void loadUserWarnings() {
                     }
 
 
+
                         if (email != null && role != null) {
                             // Check if the user is an admin or moderator
                             if (role.equals("Admin")) {
@@ -211,7 +224,10 @@ private void loadUserWarnings() {
                             }else {
                                 usersButton.setVisibility(View.GONE);
                             }
+
+                   
                         }
+                    }
                 }
             }
 

@@ -2,6 +2,7 @@ package com.dilip.conectivity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -95,6 +96,7 @@ public class AdminUsersActivity extends AppCompatActivity {
             holder.userStatusTextView.setText(user.getUserStatus());
             Picasso.get().load(user.getUserProfileImage()).into(holder.userProfileImageView);
 
+
             // Update button text based on the current user status
             String currentStatus = user.getUserStatus();
             holder.actionButton.setText(currentStatus.equals("active") ? "Deactivate" : "Activate");
@@ -125,6 +127,7 @@ public class AdminUsersActivity extends AppCompatActivity {
             });
 
 
+
             holder.viewPostsButton.setOnClickListener(v -> {
                 // Redirect to ModeratorUserPostActivity with userId
                 Intent intent = new Intent(AdminUsersActivity.this, ModeratorUserPostsActivity.class);
@@ -143,14 +146,17 @@ public class AdminUsersActivity extends AppCompatActivity {
             TextView userNameTextView, userStatusTextView;
             Button viewPostsButton, actionButton;
 
+
             public UserViewHolder(@NonNull View itemView) {
                 super(itemView);
                 userProfileImageView = itemView.findViewById(R.id.userProfileImageView);
                 userNameTextView = itemView.findViewById(R.id.userNameTextView);
                 userStatusTextView = itemView.findViewById(R.id.userStatusTextView);
                 viewPostsButton = itemView.findViewById(R.id.viewPostsButton);
+
                 actionButton = itemView.findViewById(R.id.actionButton);
             }
         }
     }
 }
+
