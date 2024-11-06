@@ -57,6 +57,26 @@
         android:text="+1234567890"
         android:textSize="16sp"
         android:layout_marginTop="5dp" />
+    <!-- User Status -->
+    <TextView
+        android:id="@+id/userStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_marginTop="5dp" />
+
+    <!-- Inside fragment_profile.xml -->
+    <TextView
+        android:id="@+id/userWarnings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone"
+    android:paddingTop="8dp"/>
+
 
     <!-- Stats Container -->
     <LinearLayout
@@ -99,22 +119,32 @@
         android:layout_marginTop="20dp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/black" />
-    <!-- All Users Button -->
+    <!-- All Users Button for admin-->
+    <Button
+        android:id="@+id/adminUsersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All Users"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:backgroundTint="@color/black" />
+    <!-- All Users Button for moderator-->
     <Button
         android:id="@+id/usersButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Users"
+        android:text="All Users"
         android:layout_marginTop="10dp"
         android:textColor="@android:color/white"
         android:visibility="gone"
         android:backgroundTint="@color/black" />
     <!-- All Posts Button -->
     <Button
-        android:id="@+id/postButton"
+        android:id="@+id/reportsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Posts"
+        android:text="All Reports"
         android:layout_marginTop="10dp"
         android:textColor="@android:color/white"
         android:visibility="gone"
