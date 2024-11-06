@@ -24,7 +24,7 @@
         android:layout_below="@id/appLogo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:textColor="@color/purple" />
+        android:textColor="@color/black" />
 
     <!-- Email Input -->
     <EditText
@@ -54,7 +54,7 @@
     <TextView
         android:id="@+id/forgetPasswordTextView"
         android:text="Forgot Password?"
-        android:textColor="@color/purple"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/passwordEditText"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/errorTextView"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/purple"
+        android:backgroundTint="@color/black"
         android:textColor="@android:color/white"
         android:padding="12dp" />
 
@@ -88,7 +88,7 @@
     <TextView
         android:id="@+id/signUpTextView"
         android:text="Don't have an account? Sign Up"
-        android:textColor="@color/purple"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/signInButton"
