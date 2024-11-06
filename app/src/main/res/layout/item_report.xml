@@ -1,0 +1,67 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:elevation="2dp"
+    android:layout_marginBottom="8dp"
+    android:clipToPadding="false">
+
+    <!-- Report Reason -->
+    <TextView
+        android:id="@+id/report_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reason"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <!-- Timestamp -->
+    <TextView
+        android:id="@+id/report_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timestamp"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"/>
+
+    <!-- Reported By -->
+    <TextView
+        android:id="@+id/report_user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reported By"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"/>
+
+    <!-- Post Caption -->
+    <TextView
+        android:id="@+id/report_caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post Caption"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/black"/>
+
+    <!-- Uploader -->
+    <TextView
+        android:id="@+id/report_uploader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Uploader"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"/>
+
+    <!-- Post Image -->
+    <ImageView
+        android:id="@+id/report_post_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>

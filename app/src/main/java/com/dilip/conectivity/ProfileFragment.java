@@ -1,5 +1,6 @@
 package com.dilip.conectivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,9 +24,9 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView userName, userEmail, userPhone, userBio, userPosts, userFollowers, userFollowing, userWarnings;
+    private TextView userName, userEmail, userPhone, userBio, userStatus, userPosts, userFollowers, userFollowing, userWarnings;
     private ImageView profileImage;
-    private Button signOutButton, editProfileButton, usersButton, postButton;
+    private Button signOutButton, editProfileButton, usersButton, adminUsersButton, reportsButton;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef, postsRef;
 
@@ -33,6 +34,7 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class ProfileFragment extends Fragment {
         userEmail = view.findViewById(R.id.userEmail);
         userPhone = view.findViewById(R.id.userPhone);
         userBio = view.findViewById(R.id.userBio);
+        userStatus = view.findViewById(R.id.userStatus);
         userWarnings = view.findViewById(R.id.userWarnings);
         profileImage = view.findViewById(R.id.profileImage);
         userPosts = view.findViewById(R.id.userPosts);
@@ -56,7 +59,9 @@ public class ProfileFragment extends Fragment {
         signOutButton = view.findViewById(R.id.signOutButton);
         editProfileButton = view.findViewById(R.id.editProfileButton);
         usersButton = view.findViewById(R.id.usersButton);
-        postButton = view.findViewById(R.id.postButton);
+        adminUsersButton = view.findViewById(R.id.adminUsersButton);
+        reportsButton = view.findViewById(R.id.reportsButton);
+
         // Load user details from Firebase Realtime Database
         loadUserDetails();
         // Load post count for the current user
@@ -81,13 +86,31 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
         usersButton.setOnClickListener(view1 ->  {
-                Intent intent = new Intent(getActivity(), ModeratorUsersActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(getActivity(), ModeratorUsersActivity.class);
+            startActivity(intent);
         });
-        postButton.setOnClickListener(new View.OnClickListener() {
+        adminUsersButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), AdminUsersActivity.class);
+            startActivity(intent);
+        });
+        reportsButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), ReportsActivity.class);
+            startActivity(intent);
+        });
+
+        adminUsersButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), AdminUsersActivity.class);
+            startActivity(intent);
+        });
+        reportsButton.setOnClickListener(view1 ->  {
+            Intent intent = new Intent(getActivity(), ReportsActivity.class);
+            startActivity(intent);
+        });
+
+        userPosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AllPostsActivity.class);
+                Intent intent = new Intent(getActivity(), UserPostActivity.class);
                 startActivity(intent);
             }
         });
@@ -97,33 +120,7 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-//    private void loadUserWarnings() {
-//        String userId = mAuth.getCurrentUser().getUid();
-//
-//        usersRef.child(userId).child("userWarnings").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    StringBuilder warningsBuilder = new StringBuilder();
-//                    for (DataSnapshot warningSnapshot : dataSnapshot.getChildren()) {
-//                        String message = warningSnapshot.child("message").getValue(String.class);
-//                        String postId = warningSnapshot.child("postId").getValue(String.class);
-//
-//                        warningsBuilder.append("• ").append(message+postId).append("\n");
-//                    }
-//                    userWarnings.setText(warningsBuilder.toString().trim());
-//                    userWarnings.setVisibility(View.VISIBLE);  // Make warnings visible if they exist
-//                } else {
-//                    userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+
 private void loadUserWarnings() {
     String userId = mAuth.getCurrentUser().getUid();
 
@@ -157,26 +154,27 @@ private void loadUserWarnings() {
                             if (completedWarnings[0] == totalWarnings) {
                                 userWarnings.setText(warningsBuilder.toString().trim());
                                 userWarnings.setVisibility(View.VISIBLE);
+
+    
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getContext(), "Failed to load caption.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Toast.makeText(getContext(), "Failed to load caption.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } else {
+                    userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
                 }
-            } else {
-                userWarnings.setVisibility(View.GONE);  // Hide warnings if none exist
             }
-        }
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-            Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
-        }
-    });
-}
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Failed to load warnings.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     private void loadUserDetails() {
@@ -192,10 +190,15 @@ private void loadUserWarnings() {
                     String image = dataSnapshot.child("userProfileImage").getValue(String.class);
                     String bio = dataSnapshot.child("userBio").getValue(String.class);
                     String role = dataSnapshot.child("userRole").getValue(String.class);
+                    String status = dataSnapshot.child("userStatus").getValue(String.class);
 
                     userName.setText(name);
                     userEmail.setText(email);
                     userPhone.setText(phone);
+//                    userStatus.setText("Account status: "+ status);
+                    if(role.equals("User") && status.equals("deactivated")){
+                        userStatus.setText("Your account is currently " + status + ". Please contact the Connectify Support Center for assistance at support@connectify.com.");
+                    }
                     // profileImage
                     userBio.setText(bio);
                     if (image != null && !image.isEmpty()) {
@@ -209,20 +212,22 @@ private void loadUserWarnings() {
 
 
                         if (email != null && role != null) {
-                            // Check if the user is an admin
-                            if (email.equals("admin@gmail.com") && role.equals("Admin")) {
+                            // Check if the user is an admin or moderator
+                            if (role.equals("Admin")) {
                                 // Add admin-specific Buttons
-                                usersButton.setVisibility(View.VISIBLE);
-                                postButton.setVisibility(View.VISIBLE);
+                                adminUsersButton.setVisibility(View.VISIBLE);
+                                reportsButton.setVisibility(View.VISIBLE);
                             }else if(role.equals("Moderator")) {
+                                // Add moderator-specific Buttons
                                 usersButton.setVisibility(View.VISIBLE);
-//                                postButton.setVisibility(View.VISIBLE);
+                                reportsButton.setVisibility(View.VISIBLE);
                             }else {
-                                postButton.setVisibility(View.GONE);
                                 usersButton.setVisibility(View.GONE);
                             }
-                        }
 
+                   
+                        }
+                    }
                 }
             }
 

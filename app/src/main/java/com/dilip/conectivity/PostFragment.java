@@ -24,8 +24,11 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,7 +50,7 @@ public class PostFragment extends Fragment {
     private Uri imageUri;
     private String postLocation = "";
     private StorageReference storageReference;
-    private DatabaseReference postsRef;
+    private DatabaseReference postsRef, userRef;
     private ProgressDialog progressDialog;
     private FirebaseAuth mAuth;
 
@@ -70,7 +73,8 @@ public class PostFragment extends Fragment {
 
         // Initialize the Places API
         Places.initialize(getContext(), "AIzaSyCjElsVqyTBv23vxQWkOy2s3RcclGtQeWA");
-
+        // Load user status and disable the upload button if deactivated
+        checkUserStatus();
         // Select image from gallery
         selectImageButton.setOnClickListener(v -> openImagePicker());
 
@@ -183,4 +187,28 @@ public class PostFragment extends Fragment {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
         userRef.child("userPosts").setValue(com.google.firebase.database.ServerValue.increment(1));
     }
+    private void checkUserStatus() {
+        String userId = mAuth.getCurrentUser().getUid();
+        userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+
+        userRef.child("userStatus").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String userStatus = snapshot.getValue(String.class);
+                if ("deactivated".equals(userStatus)) {
+                    uploadPostButton.setEnabled(false);
+                    uploadPostButton.setText("Account Deactivated");
+                    Toast.makeText(getContext(), "Your account is deactivated. Please contact support.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Failed to retrieve user status", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
+
+
