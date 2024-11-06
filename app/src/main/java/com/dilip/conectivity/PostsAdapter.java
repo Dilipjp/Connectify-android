@@ -1,13 +1,18 @@
 package com.dilip.conectivity;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
     private Context context;
@@ -171,6 +178,80 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 context.startActivity(intent);
             }
         });
+
+        // Click listener for report icon
+        // Click listener for report icon
+        holder.reportIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Show confirmation dialog with an input for report reason
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Report Post");
+
+                // Set up an EditText to get the report reason from the user
+                final EditText input = new EditText(context);
+                input.setHint("Reason for reporting...");
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+                // Set up the dialog buttons
+                builder.setPositiveButton("Report", (dialog, which) -> {
+                    // Get the reason from the EditText
+                    String reason = input.getText().toString().trim();
+
+                    if (!reason.isEmpty()) {
+                        // Proceed with reporting if a reason is provided
+
+                        // Show a progress dialog while reporting
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage("Reporting...");
+                        progressDialog.setCancelable(false); // Prevent dialog from being canceled
+                        progressDialog.show();
+
+                        // Get the current timestamp
+                        long timestamp = System.currentTimeMillis();
+
+                        // Get the current user ID
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        // Create a report entry
+                        Map<String, Object> reportData = new HashMap<>();
+                        reportData.put("postId", post.getPostId());
+                        reportData.put("timestamp", timestamp);
+                        reportData.put("userId", userId);
+                        reportData.put("reason", reason); // Add the reason to the report data
+
+                        // Save the report entry in the "reports" node
+                        FirebaseDatabase.getInstance().getReference("reports")
+                                .push() // Use push() to create a unique key for each report
+                                .setValue(reportData)
+                                .addOnCompleteListener(task -> {
+                                    // Dismiss the progress dialog when the report is complete
+                                    progressDialog.dismiss();
+
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(context, "Reported successfully.", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "Failed to report.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        // Show an error message if no reason is provided
+                        Toast.makeText(context, "Please provide a reason for reporting.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+                // Show the dialog
+                builder.show();
+            }
+        });
+
+
+
+
+        //
     }
 
     private void sharePost(String imageUrl, String caption, Context context) {
@@ -201,6 +282,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         TextView likeCountTextView;
         ImageView commentIcon;
         TextView commentCountTextView;
+        ImageView reportIcon;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -217,6 +299,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             likeCountTextView = itemView.findViewById(R.id.likeCountTextView);
             commentIcon = itemView.findViewById(R.id.commentIcon);
             commentCountTextView = itemView.findViewById(R.id.commentCountTextView);
+            reportIcon = itemView.findViewById(R.id.reportIcon);
         }
     }
 }
