@@ -1,43 +1,48 @@
-# Connectify - Social Media App 📱
+# Connectify - Social Media App 📸  
 
-Connectify is an Android application built with **Java** that allows users to connect, share content, and interact with others in a social media platform similar to Instagram. Users can create profiles, post images, follow other users, like and comment on posts, and much more. The app integrates **Firebase Authentication** for secure login, **Firebase Realtime Database** for storing user data, and **Firebase Storage** for managing user images.
+Connectify is a **social media application** for Android, designed to provide a seamless experience similar to Instagram. Users can **create posts, like, comment, follow other users**, and engage with content effortlessly. The app integrates **Firebase Authentication** for secure login, **Firestore** for real-time data storage, and **Picasso** for optimized image loading.
 
-## Features
+## 🚀 Features
 
-- 📸 **Create Posts**: Users can share images along with captions, similar to Instagram.
-- 🧑‍🤝‍🧑 **Follow/Unfollow Users**: Users can follow other profiles and stay updated with their posts.
-- 💬 **Comment and Like**: Users can interact with posts by liking and commenting.
-- 🔍 **Search Users and Posts**: Find users and posts through a search function.
-- 🏠 **Home Feed**: Display posts from users you follow in a feed-style layout.
-- 🔒 **Secure Authentication**: Users can log in or sign up using **Firebase Authentication**.
-- 📤 **Image Upload**: Images are uploaded and stored securely using **Firebase Storage**.
+- 📷 **Post & Share**: Users can upload images with captions.
+- ❤️ **Like & Comment**: Engage with posts through likes and comments.
+- 👥 **Follow System**: Follow and interact with other users.
+- 🔍 **Explore & Search**: Discover new users and posts.
+- 🔔 **Real-time Notifications**: Get notified of likes, comments, and new followers.
+- 🌓 **Dark Mode/Light Mode**: Toggle between light and dark themes.
+- 🔒 **Secure Authentication**: Users can sign up and log in using **Firebase Authentication**.
+- 📂 **Optimized Image Loading**: Uses **Picasso** for fast and efficient image rendering.
 
-## Screenshots
+---
 
-### Home Feed
-![Home Feed](https://example.com/screenshots/home_feed.png)
+## 🛠 Key Technologies Used
 
-### Post Details
-![Post Details](https://example.com/screenshots/post_details.png)
+- **Java** - Core language for Android app development.
+- **Firebase Authentication** - Secure user authentication and session management.
+- **Firebase Firestore** - Real-time NoSQL database for storing posts, comments, and user interactions.
+- **Picasso** - Image loading and caching for seamless media display.
+- **Android Jetpack Components** - Modern UI and architecture patterns.
+- **Dark Mode/Light Mode** - Adaptive UI themes for user preference.
 
-### Profile
-![Profile](https://example.com/screenshots/profile.png)
+---
 
-### Create Post
-![Create Post](https://example.com/screenshots/create_post.png)
+## 📸 Screenshots
 
-## Getting Started
+| Home Feed | Profile Page | Post Details |
+|-----------|-------------|--------------|
+| ![Home](https://github.com/yourusername/Connectify/blob/main/screenshots/home.png) | ![Profile](https://github.com/yourusername/Connectify/blob/main/screenshots/profile.png) | ![Post](https://github.com/yourusername/Connectify/blob/main/screenshots/post.png) |
 
-Follow these steps to run the app locally:
+---
 
-### Prerequisites
+## 🔧 Installation Guide
 
-- **Android Studio** for building and running the app.
-- **Firebase Project** for authentication, storage, and Realtime Database.
-  
-### Installation
+### Prerequisites:
+- **Android Studio** installed
+- **Firebase Project** set up with Authentication & Firestore
+- **Google Services JSON** (Download from Firebase Console)
 
+### Steps:
 1. **Clone the repository**:
    ```sh
-   git clone https://github.com/YourUsername/Connectify.git
+   git clone https://github.com/yourusername/Connectify.git
    cd Connectify
